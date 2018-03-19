@@ -1,7 +1,7 @@
 /**
  *
  */
-package ocrplateid.plateid.utills;
+package com.kernal.plateid.utills;
 
 import android.os.Build;
 

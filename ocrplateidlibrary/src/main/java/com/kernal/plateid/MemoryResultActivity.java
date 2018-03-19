@@ -1,4 +1,4 @@
-package ocrplateid.plateid;
+package com.kernal.plateid;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.chief.store.R;
 
 
 public class MemoryResultActivity extends Activity {

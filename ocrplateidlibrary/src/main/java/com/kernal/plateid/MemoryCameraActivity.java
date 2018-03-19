@@ -1,4 +1,4 @@
-package ocrplateid.plateid;
+package com.kernal.plateid;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -28,8 +28,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Vibrator;
 
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.text.format.Time;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -43,11 +41,11 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-
-import com.chief.store.R;
 import com.kernal.plateid.PlateCfgParameter;
 import com.kernal.plateid.PlateRecognitionParameter;
 import com.kernal.plateid.RecogService;
+import com.kernal.plateid.utills.Utils;
+import com.kernal.plateid.view.ViewfinderView;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -57,8 +55,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import ocrplateid.plateid.utills.Utils;
-import ocrplateid.plateid.view.ViewfinderView;
+
 
 /**
  *

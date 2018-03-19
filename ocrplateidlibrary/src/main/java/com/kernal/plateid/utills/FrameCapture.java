@@ -1,4 +1,4 @@
-package ocrplateid.plateid.utills;
+package com.kernal.plateid.utills;
 
 import android.graphics.Bitmap;
 import android.graphics.ImageFormat;

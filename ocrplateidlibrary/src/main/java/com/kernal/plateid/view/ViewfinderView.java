@@ -1,4 +1,4 @@
-package ocrplateid.plateid.view;
+package com.kernal.plateid.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
