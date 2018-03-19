@@ -1,0 +1,122 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.kernal.plateid">
+    <!-- 读取机器各种ID的权限 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- 在SDCard中创建与删除文件权限 -->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <!-- 往SDCard写入数据权限 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- 关闭该包下的所有应用程序 -->
+    <uses-permission android:name="android.permission.RESTART_PACKAGES" />
+    <!-- 访问internet权限 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 访问震动权限 -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!--
+    guangda
+    <uses-permission android:name="cybertech.pstore.permission.COMPONENT" />
+    <uses-permission android:name="cybertech.permission.READ_PSTORE_USERINFO" />
+    <uses-permission android:name="cybertech.permission.READ_PSTORE_LINKINFO" />
+    -->
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
+    <application
+        android:allowBackup="true"
+        android:supportsRtl="true">
+        <activity
+            android:name="com.kernal.plateid.PlateIDCfg"
+            android:configChanges="keyboardHidden|orientation"
+          >
+            <intent-filter>
+                <action android:name="kernal.plateidconfig" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.kernal.plateid.MainActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden"
+            >
+            <intent-filter>
+                <action android:name="kernal.plateid.MainActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name="com.kernal.plateid.AuthService"
+            android:enabled="true" >
+            <intent-filter>
+                <action android:name="kernal.plateid.authservice" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="com.kernal.plateid.RecogService"
+            android:enabled="true" >
+            <intent-filter>
+                <action android:name="kernal.plateid.recogService" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name="com.kernal.plateid.MemoryCameraActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|navigation"
+            >
+        </activity>
+        <activity
+            android:name="com.kernal.plateid.MemoryResultActivity"
+            android:configChanges="orientation|keyboard|keyboardHidden"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name="com.kernal.plateid.ResultActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboard|keyboardHidden"/>
+        <activity
+            android:name="com.kernal.plateid.PermissionActivity">
+        </activity>
+        <activity
+            android:name="com.kernal.plateid.PlateIDBean"
+            android:configChanges="keyboardHidden|orientation"
+      >
+            <intent-filter>
+                <action android:name="kernal.plateid" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.kernal.plateid.CameraActivity"
+            android:configChanges="keyboardHidden|orientation">
+            <intent-filter>
+                <action android:name="kernal.camera" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.kernal.plateid.CameraRecogPlateID"
+            android:configChanges="keyboardHidden|orientation" >
+            <intent-filter>
+                <action android:name="kernal.camera.zhuhai" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.kernal.plateid.PlateVideoCameraActivity"
+            android:configChanges="keyboardHidden|orientation" />
+        <activity
+            android:name="com.kernal.plateid.PlateVideoImagActivity"
+            android:configChanges="keyboardHidden|orientation" />
+        <!-- android:screenOrientation="landscape" -->
+
+    </application>
+
+</manifest>

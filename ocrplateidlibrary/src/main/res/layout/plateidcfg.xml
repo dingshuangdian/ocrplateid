@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textnMinPlateWidth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/textnMinPlateWidth"
+                android:textSize="15sp" >
+            </TextView>
+
+            <EditText
+                android:id="@+id/editnMinPlateWidth"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/editnMinPlateWidth" >
+            </EditText>
+
+            <TextView
+                android:id="@+id/textnMaxPlateWidth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/textnMaxPlateWidth"
+                android:textSize="15sp" >
+            </TextView>
+
+            <EditText
+                android:id="@+id/editnMaxPlateWidth"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/editnMaxPlateWidth" >
+            </EditText>
+
+            <TextView
+                android:id="@+id/textnImageFormat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/textnImageFormat"
+                android:textSize="15sp" >
+            </TextView>
+
+            <EditText
+                android:id="@+id/editnImageFormat"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/editnImageFormat" >
+            </EditText>
+
+            <TextView
+                android:id="@+id/txtnPlateLocate_Th"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txtnPlateLocate_Th"
+                android:textSize="15sp" >
+            </TextView>
+
+            <EditText
+                android:id="@+id/editnPlateLocate_Th"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/editnPlateLocate_Th" >
+            </EditText>
+
+            <TextView
+                android:id="@+id/txtnOCR_Th"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txtnOCR_Th"
+                android:textSize="15sp" >
+            </TextView>
+
+            <EditText
+                android:id="@+id/editnOCR_Th"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/editnOCR_Th" >
+            </EditText>
+
+            <TextView
+                android:id="@+id/txtnSlopeDetectRange"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txtnSlopeDetectRange"
+                android:textSize="15sp" >
+            </TextView>
+
+            <EditText
+                android:id="@+id/editnSlopeDetectRange"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/editnSlopeDetectRange" >
+            </EditText>
+
+            <TextView
+                android:id="@+id/txtszProvince"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txtszProvince"
+                android:textSize="15sp" >
+            </TextView>
+
+            <EditText
+                android:id="@+id/editszProvince"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/editszProvince" >
+            </EditText>
+
+            <TextView
+                android:id="@+id/txtnContrast"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txtnContrast"
+                android:textSize="15sp" >
+            </TextView>
+
+            <EditText
+                android:id="@+id/editnContrast"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/editnContrast" >
+            </EditText>
+            <!--
+                 <TextView android:text="@string/textnLastError" android:id="@+id/testname" 
+				android:layout_width="wrap_content" android:layout_height="wrap_content" 
+				android:textSize="15dip"> </TextView> <EditText android:text="@string/editnLastError" 
+				android:id="@+id/editnLastError" android:layout_width="fill_parent" android:layout_height="wrap_content"> 
+				</EditText> <TextView android:text="@string/textnErrorModelSN" android:id="@+id/testname" 
+				android:layout_width="wrap_content" android:layout_height="wrap_content" 
+				android:textSize="15dip"> </TextView> <EditText android:text="@string/editnErrorModelSN" 
+				android:id="@+id/editnErrorModelSN" android:layout_width="fill_parent" android:layout_height="wrap_content"> 
+				</EditText> <TextView android:text="@string/textreserved" android:id="@+id/textreserved" 
+				android:layout_width="wrap_content" android:layout_height="wrap_content" 
+				android:textSize="15dip"> </TextView> <EditText android:text="@string/editreserved" 
+				android:id="@+id/editreserved" android:layout_width="fill_parent" android:layout_height="wrap_content"> 
+				</EditText>
+            -->
+
+            <TextView
+                android:id="@+id/textbVertCompress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/textbVertCompress"
+                android:textSize="15sp" >
+            </TextView>
+            <!--
+                 <EditText android:text="@string/editbVertCompress" android:id="@+id/editbVertCompress" 
+				android:layout_width="fill_parent" android:layout_height="wrap_content"> 
+				</EditText>
+            -->
+
+            <RadioGroup
+                android:id="@+id/radiogroup1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_x="3px"
+                android:checkedButton="@+id/radiobutbVertCompressno"
+                android:gravity="center"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/radiobutbVertCompressyes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobutbVertCompressyes" />
+
+                <RadioButton
+                    android:id="@+id/radiobutbVertCompressno"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobutbVertCompressno" />
+            </RadioGroup>
+            <!--
+                 <TextView android:text="@string/textbIsFieldImage" android:id="@+id/textbIsFieldImage" 
+				android:layout_width="wrap_content" android:layout_height="wrap_content" 
+				android:textSize="15dip"> </TextView>
+            -->
+            <!--
+                 <EditText android:text="@string/editbIsFieldImage" android:id="@+id/editbIsFieldImage" 
+				android:layout_width="fill_parent" android:layout_height="wrap_content"> 
+				</EditText>
+            -->
+            <!--
+                 <RadioGroup android:id="@+id/radiogroup2" android:layout_width="wrap_content" 
+				android:layout_height="wrap_content" android:orientation="horizontal" android:layout_x="3px" 
+				android:checkedButton="@+id/radiobutbIsFieldImageno"> <RadioButton android:id="@+id/radiobutbIsFieldImageyes" 
+				android:layout_width="wrap_content" android:layout_height="wrap_content" 
+				android:text="@string/radiobutbIsFieldImageyes" /> <RadioButton android:id="@+id/radiobutbIsFieldImageno" 
+				android:layout_width="wrap_content" android:layout_height="wrap_content" 
+				android:text="@string/radiobutbIsFieldImageno" /> </RadioGroup> <TextView 
+				android:text="@string/textbOutputSingleFrame" android:id="@+id/textbOutputSingleFrame" 
+				android:layout_width="wrap_content" android:layout_height="wrap_content" 
+				android:textSize="15dip"> </TextView> <RadioGroup android:id="@+id/radiogroup3" 
+				android:layout_width="wrap_content" android:layout_height="wrap_content" 
+				android:orientation="horizontal" android:layout_x="3px" android:checkedButton="@+id/radiobutbOutputSingleFrameno"> 
+				<RadioButton android:id="@+id/radiobutbOutputSingleFrameyes" android:layout_width="wrap_content" 
+				android:layout_height="wrap_content" android:text="@string/radiobutbOutputSingleFrameyes" 
+				/> <RadioButton android:id="@+id/radiobutbOutputSingleFrameno" android:layout_width="wrap_content" 
+				android:layout_height="wrap_content" android:text="@string/radiobutbOutputSingleFrameno" 
+				/> </RadioGroup> <TextView android:text="@string/textbMovingImage" android:id="@+id/textbMovingImage" 
+				android:layout_width="wrap_content" android:layout_height="wrap_content" 
+				android:textSize="15dip"> </TextView> <RadioGroup android:id="@+id/radiogroup5" 
+				android:layout_width="wrap_content" android:layout_height="wrap_content" 
+				android:orientation="horizontal" android:layout_x="3px" android:checkedButton="@+id/radiobutbMovingImageno"> 
+				<RadioButton android:id="@+id/radiobutbMovingImageyes" android:layout_width="wrap_content" 
+				android:layout_height="wrap_content" android:text="@string/radiobutbMovingImageyes" 
+				/> <RadioButton android:id="@+id/radiobutbMovingImageno" android:layout_width="wrap_content" 
+				android:layout_height="wrap_content" android:text="@string/radiobutbMovingImageno" 
+				/> </RadioGroup>
+            -->
+
+            <TextView
+                android:id="@+id/textbIsNight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/textbIsNight"
+                android:textSize="15sp" >
+            </TextView>
+
+            <RadioGroup
+                android:id="@+id/radiogroup4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_x="3px"
+                android:checkedButton="@+id/radiobutbIsNightno"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/radiobutbIsNightyes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobutbIsNightyes" />
+
+                <RadioButton
+                    android:id="@+id/radiobutbIsNightno"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobutbIsNightno"
+                    android:textSize="15sp" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/txtdFormat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txtdFormat"
+                android:textSize="15sp" >
+            </TextView>
+
+            <RadioGroup
+                android:id="@+id/radiogroupdFormat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_x="3px"
+                android:checkedButton="@+id/radiobutdFormatyes"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/radiobutdFormatyes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobutdFormatyes" />
+
+                <RadioButton
+                    android:id="@+id/radiobutdFormatno"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobutdFormatno"
+                    android:textSize="15sp" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/txtbIsAutoSlope"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txtbIsAutoSlope"
+                android:textSize="15sp" >
+            </TextView>
+
+            <RadioGroup
+                android:id="@+id/radiogroupbIsAutoSlope"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_x="3px"
+                android:checkedButton="@+id/radiobutbIsAutoSlopeyes"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/radiobutbIsAutoSlopeyes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobutbIsAutoSlopeyes" />
+
+                <RadioButton
+                    android:id="@+id/radiobutbIsAutoSlopeno"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobutbIsAutoSlopeno"
+                    android:textSize="15sp" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/txttworowyellow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txttworowyellow"
+                android:textSize="15sp" >
+            </TextView>
+
+            <RadioGroup
+                android:id="@+id/radiogrouptworowyellow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_x="3px"
+                android:checkedButton="@+id/radiobuttworowyellowno"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/radiobuttworowyellowyes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobuttworowyellowyes" />
+
+                <RadioButton
+                    android:id="@+id/radiobuttworowyellowno"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobuttworowyellowno"
+                    android:textSize="15sp" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/txtarmpolice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txtarmpolice"
+                android:textSize="15sp" >
+            </TextView>
+
+            <RadioGroup
+                android:id="@+id/radiogrouparmpolice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_x="3px"
+                android:checkedButton="@+id/radiobutarmpoliceno"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/radiobutarmpoliceyes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobutarmpoliceyes" />
+
+                <RadioButton
+                    android:id="@+id/radiobutarmpoliceno"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobutarmpoliceno"
+                    android:textSize="15sp" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/txttworowarmy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txttworowarmy"
+                android:textSize="15sp" >
+            </TextView>
+
+            <RadioGroup
+                android:id="@+id/radiogrouptworowarmy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_x="3px"
+                android:checkedButton="@+id/radiobuttworowarmyno"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/radiobuttworowarmyyes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobuttworowarmyyes" />
+
+                <RadioButton
+                    android:id="@+id/radiobuttworowarmyno"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobuttworowarmyno"
+                    android:textSize="15sp" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/txttractor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txttractor"
+                android:textSize="15sp" >
+            </TextView>
+
+            <RadioGroup
+                android:id="@+id/radiogrouptractor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_x="3px"
+                android:checkedButton="@+id/radiobuttractorno"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/radiobuttractoryes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobuttractoryes" />
+
+                <RadioButton
+                    android:id="@+id/radiobuttractorno"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobuttractorno"
+                    android:textSize="15sp" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/txtonlytworowyellow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txtonlytworowyellow"
+                android:textSize="15sp" >
+            </TextView>
+
+            <RadioGroup
+                android:id="@+id/radiogrouponlytworowyellow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_x="3px"
+                android:checkedButton="@+id/radiobutonlytworowyellowno"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/radiobutonlytworowyellowyes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobutonlytworowyellowyes" />
+
+                <RadioButton
+                    android:id="@+id/radiobutonlytworowyellowno"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobutonlytworowyellowno"
+                    android:textSize="15sp" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/txtembassy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txtembassy"
+                android:textSize="15sp" >
+            </TextView>
+
+            <RadioGroup
+                android:id="@+id/radiogroupembassy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_x="3px"
+                android:checkedButton="@+id/radiobutembassyno"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/radiobutembassyyes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobutembassyyes" />
+
+                <RadioButton
+                    android:id="@+id/radiobutembassyno"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobutembassyno"
+                    android:textSize="15sp" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/txtonlylocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txtonlylocation"
+                android:textSize="15sp" >
+            </TextView>
+
+            <RadioGroup
+                android:id="@+id/radiogrouponlylocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_x="3px"
+                android:checkedButton="@+id/radiobutonlylocationno"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/radiobutonlylocationyes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobutonlylocationyes" />
+
+                <RadioButton
+                    android:id="@+id/radiobutonlylocationno"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobutonlylocationno"
+                    android:textSize="15sp" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/txtarmpolice2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txtarmpolice2"
+                android:textSize="15sp" >
+            </TextView>
+
+            <RadioGroup
+                android:id="@+id/radiogrouparmpolice2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_x="3px"
+                android:checkedButton="@+id/radiobutarmpolice2no"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/radiobutarmpolice2yes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobutarmpolice2yes" />
+
+                <RadioButton
+                    android:id="@+id/radiobutarmpolice2no"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/radiobutarmpolice2no"
+                    android:textSize="15dip" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="4"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/butset"
+                android:layout_width="150dip"
+                android:layout_height="50dip"
+                android:text="@string/butset" >
+            </Button>
+
+            <Button
+                android:id="@+id/returnbutlog"
+                android:layout_width="150dip"
+                android:layout_height="50dip"
+                android:text="@string/returnbutlog" >
+            </Button>
+
+            <Button
+                android:id="@+id/butclose"
+                android:layout_width="150dip"
+                android:layout_height="50dip"
+                android:text="@string/butclose" >
+            </Button>
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" 
+        android:layout_alignParentLeft="true">
+		<!--llayout 140dp 28dp-->
+        <RelativeLayout
+            android:id="@+id/llayout"
+            android:layout_width="1dp"
+            android:layout_height="fill_parent"
+            android:src="#FFFFFF" >
+
+        </RelativeLayout>
+
+        <SurfaceView
+            android:id="@+id/surfaceViwe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/rlyaout"
+            android:layout_toRightOf="@+id/llayout"
+            android:visibility="visible" >
+        </SurfaceView>
+
+        <ImageView
+            android:id="@+id/backgroundView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/rlyaout"
+            android:layout_toRightOf="@+id/llayout"
+            android:background="@android:color/black"
+            android:visibility="gone" />
+
+        <!-- 图片回显 -->
+        <ImageView
+            android:id="@+id/BimageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/rlyaout"
+            android:layout_toRightOf="@+id/llayout"
+            android:layout_alignParentLeft="true"
+            android:visibility="visible" />
+        <!--rlyaout 140dp 28dp 278dp-->
+        <RelativeLayout
+            android:id="@+id/rlyaout"
+            android:layout_width="107dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/rightbg"
+            android:orientation="vertical" >
+
+            <!-- 拍照android:background="@drawable/takepicbtn" -->
+            <Button
+                android:id="@+id/takepic_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:textSize="20dip"
+                android:text="@string/takepic_btn_string"
+                android:onClick="click"
+                android:visibility="visible" />
+
+            <!-- 跳过 -->
+            <Button
+                android:id="@+id/t_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="20dp"
+                android:onClick="click"
+                android:visibility="gone" />
+
+            <!-- 确认android:background="@drawable/confirmbtn" -->
+            <Button
+                android:id="@+id/confirm_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:textSize="20dip"
+                android:text="@string/confirm_btn_string"
+                android:onClick="click"/>
+
+            <!-- 重拍 android:background="@drawable/resetbtn"-->
+            <Button
+                android:id="@+id/reset_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="20dp"
+                android:textSize="20dip"
+                android:text="@string/reset_btn_string"
+                android:onClick="click"
+                android:visibility="gone" />
+
+            <!-- 返回 android:background="@drawable/backbtnc"-->
+            <Button
+                android:id="@+id/backbtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="20dp"
+                android:textSize="20dip"
+                android:text="@string/backbtn_string"
+                android:onClick="click" />
+
+            <!-- 原左侧内容 -->
+            <!-- 闪光灯文字 -->
+            <!-- TextView
+                android:id="@+id/text1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/light1"
+                android:layout_centerHorizontal="true"
+                android:text="@string/c_1_20"
+                android:textColor="@android:color/white"
+                android:textSize="20sp" 
+                android:visibility="gone" /-->
+            
+            <!-- 闪光灯图片1 android:background="@drawable/light_on"-->
+            <Button
+                android:id="@+id/light1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="20dp"
+                android:textSize="15sp"
+                android:text="@string/light1_string"
+                android:onClick="click"
+                android:visibility="visible" />
+            
+            <!-- 闪光灯图片2 android:background="@drawable/light_off"-->
+            <Button
+                android:id="@+id/light2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="20dp"
+                android:textSize="15dip"
+                android:text="@string/light2_string"
+                android:onClick="click"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/SImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:background="#FFFFFF" 
+            android:visibility="gone" />
+
+       <ImageView android:id="@+id/scopeiamgeview"
+            android:layout_width="120dip"
+            android:layout_height="120dip"
+            android:layout_centerInParent="true"
+            android:src="@drawable/plateidscope_inside200"
+            />
+
+    </RelativeLayout>
+
+</FrameLayout>

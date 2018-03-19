@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/background3"
+     >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="50dip" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="65dip"
+            android:gravity="center"
+            android:orientation="horizontal"
+             >
+
+            <Button
+                android:id="@+id/butactivation"
+                android:layout_width="150dip"
+                android:layout_height="50dip"
+                android:text="@string/activebutton" />
+
+            <Button
+                android:id="@+id/butset"
+                android:layout_width="150dip"
+                android:layout_height="50dip"
+                android:text="@string/setbutton"
+                android:visibility="gone" >
+            </Button>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/customcamerabutton"
+                android:layout_width="150dip"
+                android:layout_height="50dip"
+                android:visibility="gone"
+                android:text="@string/customCameraButton" >
+            </Button>
+         <!--   
+        <Button 
+            android:id="@+id/buttonsyscamera"
+            android:layout_width="150dip"
+            android:layout_height="50dip"
+            android:text="@string/systemCameraButton" />
+            -->
+
+            <Button
+                android:id="@+id/buttoncamera"
+                android:layout_width="150dip"
+                android:layout_height="50dip"
+                android:text="@string/customCameraButton"
+                android:visibility="visible" />
+
+            <Button
+                android:id="@+id/videoReg"
+                android:layout_width="150dip"
+                android:layout_height="50dip"
+                android:text="@string/videoReg"
+                android:visibility="visible" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="65dip"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/butselectpic"
+                android:layout_width="150dip"
+                android:layout_height="50dip"
+                android:text="@string/selectRecgnoize" />
+
+            <Button
+                android:id="@+id/butclose1"
+                android:layout_width="150dip"
+                android:layout_height="50dip"
+                android:text="@string/butclose"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/butclose"
+                android:layout_width="150dip"
+                android:layout_height="50dip"
+                android:text="@string/butclose" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

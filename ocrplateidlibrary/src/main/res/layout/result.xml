@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" 
+	android:layout_height="fill_parent"
+	android:background="@drawable/background4">
+    	
+    	<ImageView android:id="@+id/lastfinallyshowimage"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_alignParentTop="true"
+    	    android:layout_alignParentLeft="true"
+    	    android:layout_alignParentRight="true"
+    	    android:focusable="true"
+        	android:focusableInTouchMode="true"
+    	    />
+    	
+    	<EditText android:id="@+id/edit_file"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:layout_below="@+id/lastfinallyshowimage"
+    	    android:layout_alignLeft="@+id/lastfinallyshowimage"
+    	    android:layout_alignRight="@+id/lastfinallyshowimage"
+
+    	    android:gravity="top"
+    	    android:textSize="18dip"
+    	    android:layout_above="@+id/takePic"
+    	    />
+    	 
+    	<Button
+        android:id="@+id/takePic"
+        android:layout_width="wrap_content"
+        android:layout_height="50dip"
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/edit_file"
+        android:layout_alignTop="@+id/backIndex"
+        android:text="@string/camera_againest" 
+        android:visibility="gone">
+    	</Button>
+	
+    	<Button
+        android:id="@+id/backIndex"
+        android:layout_width="wrap_content"
+        android:layout_height="50dip"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/edit_file"
+        android:text="@string/backIndex" >
+   	 	</Button>
+
+</RelativeLayout>

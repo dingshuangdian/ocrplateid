@@ -1,0 +1,30 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion '23.0.3'
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile files('src/main/jniLibs/android_auth.jar')
+    compile files('src/main/jniLibs/bcprov-ext-jdk15-146.jar')
+    compile files('src/main/jniLibs/ksoap2-android-assembly-2.4-jar-with-dependencies.jar')
+    compile files('src/main/jniLibs/pki.jar')
+    compile files('src/main/jniLibs/plate_id_sdk.jar')
+    compile files('src/main/jniLibs/android-support-v4.jar')
+}

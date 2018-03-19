@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <SurfaceView
+        android:id="@+id/camerasurfaceview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+
+    <RelativeLayout
+        android:id="@+id/mainlayout"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <ImageView
+            android:id="@+id/imagebackground"
+            android:layout_width="450dip"
+            android:layout_height="170dip"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="#506495ED" />
+
+        <TextView
+            android:id="@+id/locktextview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/imagebackground"
+            android:layout_alignTop="@+id/imagebackground"
+            android:text="锁定"
+            android:textSize="25dip" />
+
+        <ImageView
+            android:id="@+id/unlockbutton"
+            android:layout_width="35dip"
+            android:layout_height="35dip"
+            android:layout_alignTop="@+id/imagebackground"
+            android:layout_toLeftOf="@+id/locktextview" />
+
+        <TextView
+            android:id="@+id/resulttextview"
+            android:layout_width="450dip"
+            android:layout_height="120dip"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:scrollbars="vertical"
+            android:textSize="25dip" />
+
+        <ImageView
+            android:id="@+id/platefreevideoframeinsideleft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/frame_left" />
+
+        <ImageView
+            android:id="@+id/platefreevideoframeinsideright"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/frame_right" />
+        
+        <ImageView
+            android:id="@+id/platefreevideoframeoutsideleft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/frame_left" />
+
+        <ImageView
+            android:id="@+id/platefreevideoframeoutsideright"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/frame_right" />        
+
+        <ImageButton
+            android:id="@+id/platevideotext4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/x4"
+            android:layout_marginTop="5dip"
+			/>
+
+        <ImageButton
+            android:id="@+id/platevideotext2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dip"
+            android:layout_marginRight="10dip"
+            android:layout_toLeftOf="@+id/platevideotext4"
+            android:background="@drawable/x2"
+            android:layout_marginTop="5dip"
+			/>
+
+            
+        <ImageButton
+            android:id="@+id/platevideotext1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/platevideotext2"
+            android:background="@drawable/x1"
+            android:layout_marginTop="5dip"
+            />
+        
+                  
+    </RelativeLayout>
+
+</FrameLayout>
