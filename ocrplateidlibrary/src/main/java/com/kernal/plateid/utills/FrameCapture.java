@@ -1,4 +1,14 @@
-package utills;
+package ocrplateid.plateid.utills;
+
+import android.graphics.Bitmap;
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
+import android.os.Environment;
+import android.util.Log;
+import android.util.Xml;
+
+import org.xmlpull.v1.XmlPullParser;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -9,17 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import org.xmlpull.v1.XmlPullParser;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.ImageFormat;
-import android.graphics.Rect;
-import android.graphics.YuvImage;
-import android.os.Environment;
-import android.util.Log;
-import android.util.Xml;
 
 public class FrameCapture {
 
@@ -46,7 +45,7 @@ public class FrameCapture {
 		}
 
 		capturePath = Environment.getExternalStorageDirectory().toString()
-				+ "/KernalSimpleCapture/" + type;
+				+ "/WintoneSimpleCapture/" + type;
 
 		File file = new File(capturePath);
 		if (!file.exists()) {
@@ -65,7 +64,7 @@ public class FrameCapture {
 		}
 
 		capturePath = Environment.getExternalStorageDirectory().toString()
-				+ "/KernalSimpleCapture/" + type;
+				+ "/WintoneSimpleCapture/" + type;
 
 		File file = new File(capturePath);
 		if (!file.exists()) {

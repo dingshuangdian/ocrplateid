@@ -5,8 +5,8 @@
     <string name="returnbutlog">返回</string>
     <string name="butclose">退出</string>
     <string name="hello"></string>
-    <string name="app_name">慧号通开发包</string>
-    <string name="company_name">北京易泊时代科技有限公司</string>
+    <string name="app_name">车仆之家</string>
+    <string name="company_name">西藏车仆汽车服务有限公司</string>
     <string name="textnMinPlateWidth">检测的最小车牌宽度</string>
     <string name="editnMinPlateWidth">80</string>
     <string name="textnMaxPlateWidth">检测的最大车牌宽度</string>

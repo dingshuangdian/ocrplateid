@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/memory"
-    tools:context="com.kernal.plateid.MemoryCameraActivity" >
+    >
 
     <SurfaceView
         android:id="@+id/surfaceViwe_video"

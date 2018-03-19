@@ -1,6 +1,7 @@
-package com.kernal.plateid;
+package ocrplateid.plateid;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Service;
 import android.content.ComponentName;
@@ -19,7 +20,6 @@ import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
-import android.hardware.Camera.Size;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -27,21 +27,27 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Vibrator;
+
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.format.Time;
-import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLayoutChangeListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Toast;
+
+
+import com.chief.store.R;
+import com.kernal.plateid.PlateCfgParameter;
+import com.kernal.plateid.PlateRecognitionParameter;
+import com.kernal.plateid.RecogService;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -51,31 +57,35 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import utills.FrameCapture;
-import utills.Utils;
-import view.ViewfinderView;
+import ocrplateid.plateid.utills.Utils;
+import ocrplateid.plateid.view.ViewfinderView;
 
 /**
- * 
- * 
- * 项目名称：plate_id_sample_service 类名称：MemoryCameraActivity 类描述： 视频扫描界面 扫描车牌并识别
- * （与视频流的拍照识别同一界面） 创建人：张志朋 创建时间：2016-1-29 上午10:55:28 修改人：user 修改时间：2016-1-29
- * 上午10:55:28 修改备注：
- * 
+ *
+ *
+ * 项目名称：plate_id_sample_service
+ * 类名称：MemoryCameraActivity
+ * 类描述：  视频扫描界面  扫描车牌并识别 （与视频流的拍照识别同一界面）
+ * 创建人：张志朋
+ * 创建时间：2016-1-29 上午10:55:28
+ * 修改人：user
+ * 修改时间：2016-1-29 上午10:55:28
+ * 修改备注：
+ * 修改时间：2017-03-07 下午17:14:12
+ * 修改备注：增加新能源车牌扫描.  建议更新其他扫描相关代码。
  * @version
- * 
+ *
  */
-public class MemoryCameraActivity extends Activity implements
-		SurfaceHolder.Callback, Camera.PreviewCallback {
+public class MemoryCameraActivity extends Activity implements SurfaceHolder.Callback, Camera.PreviewCallback {
+	//public static final int  CAMERA_OK=0;
 	private Camera camera;
 	private SurfaceView surfaceView;
-	private static final String PATH = Environment
-			.getExternalStorageDirectory().toString() + "/DCIM/Camera/";
+	private static final String PATH = Environment.getExternalStorageDirectory().toString() + "/DCIM/Camera/";
+	// private TextView resultEditText;
 	private ImageButton back_btn, flash_btn, back, take_pic;
 	private ViewfinderView myview;
 	private RelativeLayout re;
-	private int width, height,	screenWidth ,screenHeight;
+	private int width, height;
 	private TimerTask timer;
 	private int preWidth = 0;
 	private int preHeight = 0;
@@ -89,39 +99,33 @@ public class MemoryCameraActivity extends Activity implements
 	private String[] fieldvalue = new String[14];
 	private int rotation = 0;
 	private static int tempUiRot = 0;
-	private Bitmap bitmap, bitmap1;
+	private Bitmap bitmap,bitmap1;
 	private Vibrator mVibrator;
 	private PlateRecognitionParameter prp = new PlateRecognitionParameter();;
 	private boolean setRecogArgs = true;// 刚进入此界面后对识别车牌函数进行参数设置
-	private boolean isCamera;// 判断是预览识别还是视频识别 true:视频识别 false:拍照识别
-	private boolean recogType;// 记录进入此界面时是拍照识别还是视频识别 true:视频识别 false:拍照识别
+	private boolean isCamera;// 判断是预览识别还是视频识别    true:视频识别        false:预览识别
+	private boolean recogType;// 记录进入此界面时是拍照识别还是视频识别   	 true:视频识别 		false:拍照识别
 	private byte[] tempData;
 	private byte[] picData;
-	private Timer time;
-	private boolean cameraRecogUtill = false; // cameraRecogUtill
-												// true:拍照识别采用拍摄照片（整图）根据路径识别，不受扫描框限制,
-												// false:采用视频流 单帧识别模式 识别扫描框内的车牌
-	private String path;// 圖片保存的路徑
+	private Timer time = new Timer();
+
 	public RecogService.MyBinder recogBinder;
-	private boolean isAutoFocus = true; // 是否开启自动对焦 true:开启，定时对焦 false:不开起
-										// ，只在图片模糊时对焦
-	private boolean sameProportion = false;   //是否在1280*960预览分辨率以下找到与屏幕比相同比例的 预览分辨率组
-	private int initPreWidth = 1280; //
-	private int initPreHeight=960;//预览分辨率筛选上限，即在筛选合适的分辨率时  在这两个值以下筛选
-	private boolean isOnResume = false;
-	int uiRot;
- 	public ServiceConnection recogConn = new ServiceConnection() {
+	private boolean isAutoFocus=true; //是否开启自动对焦   true:开启，定时对焦      false:不开起 ，只在图片模糊时对焦
+	public ServiceConnection recogConn = new ServiceConnection()
+	{
 		@Override
-		public void onServiceDisconnected(ComponentName name) {
+		public void onServiceDisconnected(ComponentName name)
+		{
 			recogConn = null;
 		}
- 
+
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			recogBinder = (RecogService.MyBinder) service;
 			iInitPlateIDSDK = recogBinder.getInitPlateIDSDK();
 
-			if (iInitPlateIDSDK != 0) {
+			if (iInitPlateIDSDK != 0)
+			{
 				nRet = iInitPlateIDSDK;
 				String[] str = { "" + iInitPlateIDSDK };
 				getResult(str);
@@ -143,180 +147,167 @@ public class MemoryCameraActivity extends Activity implements
 			cfgparameter.onlytworowyellow = 11;
 			cfgparameter.tractor = 8;
 			cfgparameter.bIsNight = 1;
-			cfgparameter.newEnergy  = 24; //新能源车牌开启    
+			cfgparameter.newEnergy  = 24; //新能源车牌开启
 			cfgparameter.consulate = 22;  //领事馆车牌开启;
-			if (cameraRecogUtill) {
-				imageformat = 0;
-			}
-			recogBinder.setRecogArgu(cfgparameter, imageformat, bVertFlip,
-					bDwordAligned);
+			recogBinder.setRecogArgu(cfgparameter, imageformat, bVertFlip, bDwordAligned);
 
 			// fieldvalue = recogBinder.doRecog(recogPicPath, width,
 			// height);
 
 		}
 	};
-	private Handler handler = new Handler() {
+	private Handler handler = new Handler()
+	{
 		@Override
-		public void handleMessage(Message msg) {
-			getScreenSize();
-			if(msg.what==5){
-				getPreToChangView(preWidth, preHeight);	
-			}else{
-				re.removeView(myview);	
-				if(camera!=null){
-					setRotationAndView(msg.what,camera);		
-				}									
-				getPreToChangView(preWidth, preHeight);	
-				if (rotation == 90 || rotation == 270) {					
-				myview = new ViewfinderView(MemoryCameraActivity.this,false,preWidth,preHeight);
-			} else {	
-				myview = new ViewfinderView(MemoryCameraActivity.this, true,preWidth,preHeight);
-			}	
-				re.addView(myview);					
-				if(camera!=null){
-					camera.setDisplayOrientation(rotation);
-				}
-			}
+		public void handleMessage(Message msg)
+		{
+			re.removeView(myview);
+			setRotationAndView(msg.what);
+			re.addView(myview);
+			initCamera(holder, rotation);
 			super.handleMessage(msg);
 		}
 	};
-
-	@SuppressLint("NewApi")
-	@Override
+	@SuppressLint("NewApi") @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+
+//		View mDecorView = getWindow().getDecorView();
+//		hiddenVirtualButtons(mDecorView);
+		int uiRot = getWindowManager().getDefaultDisplay().getRotation();// 获取屏幕旋转的角度
+		System.out.println("旋转角度——————" + uiRot);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);//
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
-				WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		setContentView(R.layout.activity_carmera);
-		getScreenSize();
-		uiRot = getWindowManager().getDefaultDisplay().getRotation();// 获取屏幕旋转的角度
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		setContentView(R.layout.activity_carmera_);
+
+		//ininCar();
+
+
+
+
+
 		isCamera = getIntent().getBooleanExtra("camera", false);
-
 		recogType = getIntent().getBooleanExtra("camera", false);
-		if (isCamera) {
-			if (cameraRecogUtill) {
-				cameraRecogUtill = false;
-			}
-		}
 		RecogService.initializeType = recogType;
-		findiew();		
-		tempUiRot = 0;
-	}
-	// 设置相机取景方向和扫面框
-	private void setRotationAndView(int uiRot,Camera camera) {
-		setScreenSize(this);
-		rotation = Utils.setRotation( uiRot,camera);
-		if (rotation == 90 || rotation == 270) // 竖屏状态下
-		{
-			setLinearButton();
-		} else { // 横屏状态下
-			setHorizontalButton();
-		}
-	
+
+		findiew();
+		setRotationAndView(uiRot);
 	}
 
-	@SuppressLint("NewApi")
-	private void findiew() {
+
+	/**
+	 * 注意：2017/06/27 新增：解决没有权限的情况下 直接使用接车中的扫车牌,与此类代码无关-- 骆
+	 *
+	 */
+
+
+	public static final int  CAMERA_OK=0;
+	public static final int  READ_PHONE_STATE_OK=1;
+
+	//设置相机取景方向和扫面框
+	private void setRotationAndView(int uiRot){
+
+		setScreenSize(this);
+		System.out.println("屏幕宽："+width+"     屏幕高："+height);
+		rotation= Utils.setRotation(width, height, uiRot, rotation);
+		System.out.println("rotation------"+rotation);
+		if (rotation == 90 || rotation == 270)  //竖屏状态下
+		{
+			myview = new ViewfinderView(MemoryCameraActivity.this, width, height, false);
+			setLinearButton();
+
+		}
+		else
+		{    //横屏状态下
+			myview = new ViewfinderView(MemoryCameraActivity.this, width, height, true);
+			setHorizontalButton();
+
+		}
+	}
+	@SuppressLint("NewApi") private void findiew()
+	{
 		// TODO Auto-generated method stub
 		surfaceView = (SurfaceView) findViewById(R.id.surfaceViwe_video);
+
 		back_btn = (ImageButton) findViewById(R.id.back_camera);
 		flash_btn = (ImageButton) findViewById(R.id.flash_camera);
 		back = (ImageButton) findViewById(R.id.back);
 		take_pic = (ImageButton) findViewById(R.id.take_pic_btn);
 		re = (RelativeLayout) findViewById(R.id.memory);
-		re.addOnLayoutChangeListener(new OnLayoutChangeListener() {
-			
-			@Override
-			public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight,
-	                int oldBottom) {
-				if((bottom!=oldBottom&&right==oldRight)||(bottom==oldBottom&&right!=oldRight)){
-					Message mesg = new Message();
-					mesg.what =5;
-					handler.sendMessage(mesg);		
-				}
-				
-			}
-		});
-		// hiddenVirtualButtons(re);
+//		hiddenVirtualButtons(re);
 		holder = surfaceView.getHolder();
 		holder.addCallback(MemoryCameraActivity.this);
 		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-		if (isCamera) {
+		if (isCamera)
+		{
 			take_pic.setVisibility(View.GONE);
-		} else {
+		}
+		else
+		{
 			take_pic.setVisibility(View.VISIBLE);
 		}
-		// 因为箭头方向的原因，横竖屏状态下 返回按钮是两张不同的ImageView
-		// 横屏状态下返回按钮
+		//因为箭头方向的原因，横竖屏状态下 返回按钮是两张不同的ImageView
+		//横屏状态下返回按钮
 
-		back_btn.setOnClickListener(new OnClickListener() {
+		back_btn.setOnClickListener(new OnClickListener()
+		{
 
 			@Override
-			public void onClick(View arg0) {
+			public void onClick(View arg0)
+			{
 				// TODO Auto-generated method stub
-				Intent intent  = new Intent("kernal.plateid.MainActivity");
-				startActivity(intent);
-				closeCamera();
 				finish();
 			}
 		});
-		// 竖屏状态下返回按钮
-		back.setOnClickListener(new OnClickListener() {
+		//竖屏状态下返回按钮
+		back.setOnClickListener(new OnClickListener()
+		{
 
 			@Override
-			public void onClick(View arg0) {
+			public void onClick(View arg0)
+			{
 				// TODO Auto-generated method stub\
-				Intent intent  = new Intent("kernal.plateid.MainActivity");
-				startActivity(intent);
 				closeCamera();
 				finish();
 			}
 		});
-		// 闪光灯监听事件
+		//闪光灯监听事件
 		flash_btn.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
 				// b = true;
 				// TODO Auto-generated method stub
-				if (!getPackageManager().hasSystemFeature(
-						PackageManager.FEATURE_CAMERA_FLASH)) {
-					Toast.makeText(
-							MemoryCameraActivity.this,
-							getResources().getString(
-									getResources().getIdentifier("no_flash",
-											"string", getPackageName())),
-							Toast.LENGTH_LONG).show();
-				} else {
-					if (camera != null) {
+				if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
+					Toast.makeText(MemoryCameraActivity.this, getResources().getString(getResources().getIdentifier("no_flash", "string", getPackageName())), Toast.LENGTH_LONG).show();
+				}
+				else {
+					if (camera != null)
+					{
 						Camera.Parameters parameters = camera.getParameters();
 						String flashMode = parameters.getFlashMode();
-						if (flashMode
-								.equals(Camera.Parameters.FLASH_MODE_TORCH)) {
-
-							parameters
-									.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+						if (flashMode.equals(Camera.Parameters.FLASH_MODE_TORCH))
+						{
+							parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
 							parameters.setExposureCompensation(0);
-						} else {
-							parameters
-									.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);// 闪光灯常亮
-							parameters.setExposureCompensation(2);
-
 						}
-						try {
+						else
+						{
+							parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);// 闪光灯常亮
+							parameters.setExposureCompensation(-1);
+						}
+						try
+						{
 							camera.setParameters(parameters);
-						} catch (Exception e) {
-
-							Toast.makeText(
-									MemoryCameraActivity.this,
+						}
+						catch (Exception e)
+						{
+							Toast.makeText(MemoryCameraActivity.this,
 									getResources().getString(
-											getResources().getIdentifier(
-													"no_flash", "string",
-													getPackageName())),
+											getResources().getIdentifier("no_flash",
+													"string", getPackageName())),
 									Toast.LENGTH_LONG).show();
 						}
 						camera.startPreview();
@@ -325,20 +316,24 @@ public class MemoryCameraActivity extends Activity implements
 			}
 
 		});
-		// 拍照按钮
-		take_pic.setOnClickListener(new OnClickListener() {
+		//拍照按钮
+		take_pic.setOnClickListener(new OnClickListener()
+		{
 
 			@Override
-			public void onClick(View arg0) {
+			public void onClick(View arg0)
+			{
 				// TODO Auto-generated method stub
+
 				isCamera = true;
+
 			}
- 
+
 		});
 	}
 
-	// 设置竖屏方向按钮布局
-	private void setLinearButton() {
+	//设置竖屏方向按钮布局
+	private void setLinearButton(){
 		int back_w;
 		int back_h;
 		int flash_w;
@@ -346,16 +341,14 @@ public class MemoryCameraActivity extends Activity implements
 		int Fheight;
 		int take_h;
 		int take_w;
-		LayoutParams layoutParams;
+		RelativeLayout.LayoutParams layoutParams;
 		back.setVisibility(View.VISIBLE);
 		back_btn.setVisibility(View.GONE);
 		back_h = (int) (height * 0.066796875);
 		back_w = (int) (back_h * 1);
-		layoutParams = new LayoutParams(back_w, back_h);
-		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT,
-				RelativeLayout.TRUE);
-		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP,
-				RelativeLayout.TRUE);
+		layoutParams = new RelativeLayout.LayoutParams(back_w, back_h);
+		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
 
 		Fheight = (int) (width * 0.75);
 		layoutParams.topMargin = (int) (((height - Fheight * 0.8 * 1.585) / 2 - back_h) / 2);
@@ -364,11 +357,9 @@ public class MemoryCameraActivity extends Activity implements
 
 		flash_h = (int) (height * 0.066796875);
 		flash_w = (int) (flash_h * 1);
-		layoutParams = new LayoutParams(flash_w, flash_h);
-		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,
-				RelativeLayout.TRUE);
-		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP,
-				RelativeLayout.TRUE);
+		layoutParams = new RelativeLayout.LayoutParams(flash_w, flash_h);
+		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
 
 		Fheight = (int) (width * 0.75);
 		layoutParams.topMargin = (int) (((height - Fheight * 0.8 * 1.585) / 2 - flash_h) / 2);
@@ -377,18 +368,15 @@ public class MemoryCameraActivity extends Activity implements
 
 		take_h = (int) (height * 0.105859375);
 		take_w = (int) (take_h * 1);
-		layoutParams = new LayoutParams(take_w, take_h);
-		layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL,
-				RelativeLayout.TRUE);
-		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM,
-				RelativeLayout.TRUE);		
-		layoutParams.bottomMargin = (int) (height * 0.10486111111111111111111111111111);
-		
+		layoutParams = new RelativeLayout.LayoutParams(take_w, take_h);
+		layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+
+		layoutParams.bottomMargin = (int) (width * 0.10486111111111111111111111111111);
 		take_pic.setLayoutParams(layoutParams);
 	}
-
-	// 设置横屏屏方向按钮布局
-	private void setHorizontalButton() {
+	//设置横屏屏方向按钮布局
+	private void setHorizontalButton(){
 		int back_w;
 		int back_h;
 		int flash_w;
@@ -396,16 +384,14 @@ public class MemoryCameraActivity extends Activity implements
 		int Fheight;
 		int take_h;
 		int take_w;
-		LayoutParams layoutParams;
+		RelativeLayout.LayoutParams layoutParams;
 		back_btn.setVisibility(View.VISIBLE);
 		back.setVisibility(View.GONE);
 		back_w = (int) (width * 0.066796875);
 		back_h = (int) (back_w * 1);
-		layoutParams = new LayoutParams(back_w, back_h);
-		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT,
-				RelativeLayout.TRUE);
-		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM,
-				RelativeLayout.TRUE);
+		layoutParams = new RelativeLayout.LayoutParams(back_w, back_h);
+		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
 		Fheight = height;
 
 		Fheight = (int) (height * 0.75);
@@ -415,11 +401,9 @@ public class MemoryCameraActivity extends Activity implements
 
 		flash_w = (int) (width * 0.066796875);
 		flash_h = (int) (flash_w * 1);
-		layoutParams = new LayoutParams(flash_w, flash_h);
-		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT,
-				RelativeLayout.TRUE);
-		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP,
-				RelativeLayout.TRUE);
+		layoutParams = new RelativeLayout.LayoutParams(flash_w, flash_h);
+		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
 
 		Fheight = (int) (height * 0.75);
 		layoutParams.leftMargin = (int) (((width - Fheight * 0.8 * 1.585) / 2 - back_h) / 2);
@@ -428,307 +412,384 @@ public class MemoryCameraActivity extends Activity implements
 
 		take_h = (int) (width * 0.105859375);
 		take_w = (int) (take_h * 1);
-		layoutParams = new LayoutParams(take_w, take_h);
-		layoutParams.addRule(RelativeLayout.CENTER_VERTICAL,
-				RelativeLayout.TRUE);
-		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,
-				RelativeLayout.TRUE);
+		layoutParams = new RelativeLayout.LayoutParams(take_w, take_h);
+		layoutParams.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
+		layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
 
-		layoutParams.rightMargin = (int) (width * 0.10486111111111111111111111111111);
+		layoutParams.rightMargin = (int) (height * 0.10486111111111111111111111111111);
 		take_pic.setLayoutParams(layoutParams);
+
 	}
+
+
+
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		if (camera != null) {						
-				initCamera(holder, initPreWidth, initPreHeight);
-				getPreToChangView(preWidth, preHeight);
-				if(myview==null){
-					if (rotation == 90 || rotation == 270) {
-						myview = new ViewfinderView(MemoryCameraActivity.this, false,
-								preWidth, preHeight);
-					} else {
-						myview = new ViewfinderView(MemoryCameraActivity.this, true,
-								preWidth, preHeight);
-					}
-					re.addView(myview);
-				}				
-		}
-		isOnResume = true;
-	}
 
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-		//打开相机  设置相机参数
-		OpenCameraAndSetParameters();
+		if (camera == null) {
+			try {
+				camera = Camera.open();
+
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				return;
+			}
+		}
+		try {
+			camera.setPreviewDisplay(holder);
+			if (timer == null) {
+				timer = new TimerTask()
+				{
+					public void run()
+					{
+						// isSuccess=false;
+						if (camera != null) {
+							try {
+								camera.autoFocus(new AutoFocusCallback()
+								{
+									public void onAutoFocus(boolean success, Camera camera)
+									{
+										// isSuccess=success;
+									}
+								});
+							}
+							catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					};
+				};
+			}
+			time.schedule(timer, 500, 2500);
+			initCamera(holder, rotation);
+			re.addView(myview);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+
+		}
 	}
 	@Override
-	public void surfaceChanged(final SurfaceHolder holder, int format,
-			int width, int height) {
+	public void surfaceChanged(final SurfaceHolder holder, int format, int width, int height)
+	{
+
+		if(isAutoFocus){
+
+			if (camera != null)
+			{
+				try {
+					camera.autoFocus(new AutoFocusCallback()
+					{
+						@Override
+						public void onAutoFocus(boolean success, Camera camera)
+						{
+							if (success)
+							{
+
+								synchronized (camera)
+								{
+									new Thread()
+									{
+										public void run()
+										{
+
+											initCamera(holder, rotation);
+											super.run();
+										}
+									}.start();
+								}
+							}
+						}
+					});
+
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+
+			}}else
+		{
+			synchronized (camera)
+			{
+				new Thread()
+				{
+					public void run()
+					{
+
+						initCamera(holder, rotation);
+						super.run();
+					}
+				}.start();
+			}
+		}
+
 	}
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		isOnResume = false;
-	}
+		try
+		{
+			if (camera != null)
+			{
+				camera.setPreviewCallback(null);
+				camera.stopPreview();
+				camera.release();
+				camera = null;
+			}
+		}
+		catch (Exception e)
+		{
+		}
 
-	@Override
-	protected void onPause() {
-		// TODO Auto-generated method stub
-		super.onPause();
-		//关闭相机
-		closeCamera();
 	}
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onStop()
+	 */
 	@Override
 	protected void onStop() {
-	// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
 		super.onStop();
-			re.removeView(myview);
-			myview = null;		
-}
 
+		if(timer!=null){
+			timer.cancel();
+			timer=null;
+		}
+		re.removeView(myview);
+	}
 	int nums = -1;
+	int switchs = -1;
 	private byte[] intentNV21data;
 
 	@Override
-	public void onPreviewFrame(byte[] data, Camera camera) 
+	public void onPreviewFrame(byte[] data, Camera camera)
 	{
 		// 实时监听屏幕旋转角度
 		int uiRot = getWindowManager().getDefaultDisplay().getRotation();// 获取屏幕旋转的角度
-		if (uiRot != tempUiRot) {
+		if (uiRot != tempUiRot)
+		{
+			System.err.println("uiRot:" + uiRot);
 			Message mesg = new Message();
 			mesg.what = uiRot;
-			handler.sendMessage(mesg);			
-			tempUiRot = uiRot;	
+			handler.sendMessage(mesg);
+			tempUiRot = uiRot;
+
 		}
+
 		if (setRecogArgs) {
-			Intent authIntent = new Intent(MemoryCameraActivity.this,
-					RecogService.class);
-			bindService(authIntent, recogConn, Service.BIND_AUTO_CREATE);			
+			Intent authIntent = new Intent(MemoryCameraActivity.this, RecogService.class);
+			bindService(authIntent, recogConn, Service.BIND_AUTO_CREATE);
 			setRecogArgs = false;
 		}
 		if (iInitPlateIDSDK == 0) {
-			prp.height = preHeight;//
-			prp.width = preWidth;//
-			// 开发码
-			prp.devCode = Devcode.DEVCODE;
-
-			if (cameraRecogUtill) {
-				// 拍照识别 在使用根据图片路径识别时 执行下列代码
-				if (isCamera) {
-					BitmapFactory.Options options = new BitmapFactory.Options();
-					options.inPreferredConfig = Config.ARGB_8888;
-					options.inPurgeable = true;
-					options.inInputShareable = true;
-					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					YuvImage yuvimage = new YuvImage(data, ImageFormat.NV21,
-							preWidth, preHeight, null);
-					yuvimage.compressToJpeg(
-							new Rect(0, 0, preWidth, preHeight), 100, baos);
-					bitmap = BitmapFactory.decodeByteArray(baos.toByteArray(),
-							0, baos.size(), options); 
-					Matrix matrix = new Matrix();
-					matrix.reset();
-					if (rotation == 90) {
-						matrix.setRotate(90);
-					} else if (rotation == 180) {
-						matrix.setRotate(180);
-					} else if (rotation == 270) {
-						matrix.setRotate(270);
-						//
-					}
-					bitmap1 = Bitmap
-							.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
-									bitmap.getHeight(), matrix, true);
-					path = savePicture(bitmap1);
-					prp.pic = path;
-					if(myview.length!=0&&surfaceView.getHeight()!=0){
-						fieldvalue = recogBinder.doRecogDetail(prp);
-					}
-					nRet = recogBinder.getnRet();
-					if (nRet != 0) {
-
-						feedbackWrongCode();
-					} else {
-
-						number = fieldvalue[0];
-						color = fieldvalue[1];
-						mVibrator = (Vibrator) getApplication()
-								.getSystemService(Service.VIBRATOR_SERVICE);
-						mVibrator.vibrate(100);
-						closeCamera();
-						// 此模式下跳转 请到MemoryResultActivity 更改下代码 有注释注意查看
-						Intent intent = new Intent(MemoryCameraActivity.this,
-								MemoryResultActivity.class);
-						intent.putExtra("number", number);
-						intent.putExtra("color", color);
-						intent.putExtra("path", path);
-						// intent.putExtra("time", fieldvalue[11]);
-						intent.putExtra("recogType", false);
-						startActivity(intent);
-						MemoryCameraActivity.this.finish();
-					}
-				}
-			} else {
-				// System.out.println("视频流识别模式");
-				
+			nums++;
+			if (nums == 1)
+			{
+				nums = -1;
+				prp.height = preHeight;//
+				prp.width = preWidth;//
 				prp.picByte = data;
-				picData = data;		
-				if (rotation == 0) {
-					// 通知识别核心,识别前图像应先旋转的角度
+				picData =data;
+//				 prp.isCheckDevType = true;
+				// 开发码
+				prp.devCode = Devcode.DEVCODE;
+				if (rotation == 0)
+				{
+					//通知识别核心,识别前图像应先旋转的角度
 					prp.plateIDCfg.bRotate = 0;
 					setHorizontalRegion();
-				} else if (rotation == 90) {
+				}
+				else if (rotation == 90)
+				{
+
 					prp.plateIDCfg.bRotate = 1;
 					setLinearRegion();
 
-				} else if (rotation == 180) {
+				}
+				else if (rotation == 180)
+				{
 					prp.plateIDCfg.bRotate = 2;
 					setHorizontalRegion();
-				} else if (rotation == 270) {
+				}
+				else if (rotation == 270)
+				{
 					prp.plateIDCfg.bRotate = 3;
 					setLinearRegion();
 				}
-				if (isCamera) {
-					// 进行授权验证 并开始识别
-					if(myview.length!=0&&surfaceView.getHeight()!=0){
-//						System.out.println("视频流识别模式");
-						fieldvalue = recogBinder.doRecogDetail(prp);
-					}
+				// System.out.println("实际区域  " + preWidth +
+				// "    " + preHeight);
+				// System.out.println("边长："+ViewfinderView.length*2);
+				// System.out.println("敏感区域：   " +
+				// prp.plateIDCfg.left + "    "
+				// + prp.plateIDCfg.right + "    " +
+				// prp.plateIDCfg.top
+				// + "    " + prp.plateIDCfg.bottom);
+				if (isCamera)
+				{
+					//  进行授权验证  并开始识别
+					fieldvalue = recogBinder.doRecogDetail(prp);
 					nRet = recogBinder.getnRet();
 
-					if (nRet != 0) {
+					if (nRet != 0){
 						String[] str = { "" + nRet };
 						getResult(str);
-					} else {
+					}else{
 						getResult(fieldvalue);
 						intentNV21data = data;
 					}
 
 				}
+
 			}
 		}
 	}
-
-	// 设置横屏时的识别区域
-	private void setHorizontalRegion() {
-	
-//		System.out.println("myview.length："+myview.length+" -----preHeight"+preHeight+"      surfaceView.getHeight():"+surfaceView.getHeight());
-		prp.plateIDCfg.left = preWidth / 2 - myview.length * preHeight / surfaceView.getHeight();
-	
-		prp.plateIDCfg.right = preWidth / 2 + myview.length * preHeight
-				/ surfaceView.getHeight();
-		prp.plateIDCfg.top = preHeight / 2 - myview.length * preHeight / surfaceView.getHeight();
-		prp.plateIDCfg.bottom = preHeight / 2 + myview.length * preHeight
-				/ surfaceView.getHeight();
-//		System.out.println("横屏时   左  ："+prp.plateIDCfg.left+"   右  ："+prp.plateIDCfg.right+"     高："+prp.plateIDCfg.top+"    底："+prp.plateIDCfg.bottom);
+	//设置横屏时的识别区域
+	private void setHorizontalRegion(){
+		prp.plateIDCfg.left = preWidth / 2 - myview.length * preHeight / height;
+		prp.plateIDCfg.right = preWidth / 2 + myview.length * preHeight / height;
+		prp.plateIDCfg.top = preHeight / 2 - myview.length * preHeight / height;
+		prp.plateIDCfg.bottom = preHeight / 2 + myview.length * preHeight / height;
+	}
+	//设置竖屏时的识别区域
+	private void setLinearRegion(){
+		prp.plateIDCfg.left = preHeight / 2 - myview.length * preWidth / height;
+		prp.plateIDCfg.right = preHeight / 2 + myview.length * preWidth / height;
+		prp.plateIDCfg.top = preWidth / 2 - myview.length * preWidth / height;
+		prp.plateIDCfg.bottom = preWidth / 2 + myview.length * preWidth / height;
 	}
 
-	// 设置竖屏时的识别区域  
-	private void setLinearRegion() {
-	
-		prp.plateIDCfg.left = preHeight / 2 - myview.length * preWidth / surfaceView.getHeight();
-		prp.plateIDCfg.right = preHeight / 2 + myview.length * preWidth
-				/ surfaceView.getHeight();
-		prp.plateIDCfg.top = preWidth / 2 - myview.length * preWidth /surfaceView.getHeight();
-		prp.plateIDCfg.bottom = preWidth / 2 + myview.length * preWidth
-				/ surfaceView.getHeight();
 
-//		System.out.println("竖屏时      左  ："+prp.plateIDCfg.left+"   右  ："+prp.plateIDCfg.right+"     高："+prp.plateIDCfg.top+"    底："+prp.plateIDCfg.bottom);
-	}
-
-	//筛选预览分辨率  争取筛选到与屏幕同比例的值，否则周边加边框，保证预览图不出现拉伸压缩现象
-	private void initCamera(SurfaceHolder holder, int setPreWidth,int setPreHeight) {
+	/**
+	 *
+	 * @Title: initCamera
+	 * @Description: TODO(初始化相机)
+	 * @param @param holder
+	 * @param @param r 相机取景方向
+	 * @return void 返回类型
+	 * @throws
+	 */
+	@TargetApi(14)
+	private void initCamera(SurfaceHolder holder, int r)
+	{
 		Camera.Parameters parameters = camera.getParameters();
-		List<Size> list = parameters.getSupportedPreviewSizes();
-		Size size;
+		List<Camera.Size> list = parameters.getSupportedPreviewSizes();
+		Camera.Size size;
 		int length = list.size();
 		int previewWidth = 480;
 		int previewheight = 640;
 		int second_previewWidth = 0;
 		int second_previewheight = 0;
-		
-		if (length == 1) {
-			//设备只有一组预览分辨率
+		if (length == 1)
+		{
 			size = list.get(0);
 			previewWidth = size.width;
 			previewheight = size.height;
-		} else {
-			for (int i = 0; i < length; i++) {
+		}
+		else
+		{
+			for (int i = 0; i < length; i++)
+			{
 				size = list.get(i);
-				// System.out.println("宽   "+size.width+"   高"+size.height);
-				
-						if (size.height <= setPreHeight || size.width <= setPreWidth){
- 							
+//				System.out.println("宽   "+size.width+"   高"+size.height);
+				if ((width<height&&height*3==width*4)||(width>height&&width*3==height*4))
+				{
+					if (size.height <= 960 || size.width <= 1280)
+					{
+
+						second_previewWidth = size.width;
+						second_previewheight = size.height;
+
+						if (previewWidth <= second_previewWidth
+								&& second_previewWidth * 3 == second_previewheight * 4)
+						{
+							previewWidth = second_previewWidth;
+							previewheight = second_previewheight;
+						}
+
+					}
+				}
+				else
+				{
+					if((width<height&&height*9==width*16)||(width>height&&width*9==height*16)){
+						if ((size.height <= 960 || size.width <= 1280)&&size.width*9==size.height*16) {
+
 							second_previewWidth = size.width;
 							second_previewheight = size.height;
-							
-							if (previewWidth <= second_previewWidth) {
-								 //横屏下
-								if(width>height){									
-									if(second_previewWidth*surfaceView.getHeight()==second_previewheight*surfaceView.getWidth()){
-										previewWidth = second_previewWidth;
-										previewheight = second_previewheight;
-										sameProportion = true;
-									 }
-								} 
-								//竖屏下
-								if(height>width){
-									
-									if(second_previewWidth *surfaceView.getWidth()==second_previewheight*surfaceView.getHeight()){
-										previewWidth = second_previewWidth;
-										previewheight = second_previewheight;										
-										sameProportion = true;
-										
-										}
-								}								
+							if (previewWidth <=second_previewWidth) {
+								previewWidth = second_previewWidth;
+								previewheight = second_previewheight;
 							}
 						}
-						}
-			if(!sameProportion){
-				for (int i = 0; i < length; i++) {
-					size = list.get(i);			
-							if (size.height<=setPreHeight || size.width <= setPreWidth){
-								
-								second_previewWidth = size.width;
-								second_previewheight = size.height;
-								
-								if (previewWidth <= second_previewWidth) {
-									previewWidth = second_previewWidth;
-									previewheight = second_previewheight;
-							}
-							}
-			}				
-			}
 					}
+					else{
+						if (size.height <= 960 || size.width <= 1280)
+						{
+
+							second_previewWidth = size.width;
+							second_previewheight = size.height;
+							if (previewWidth <= second_previewWidth)
+							{
+								previewWidth = second_previewWidth;
+								previewheight = second_previewheight;
+							}
+						}
+					}
+
+				}
+			}
+		}
 		preWidth = previewWidth;
-		preHeight = previewheight;	
-		System.out.println("预览分辨率：" + preWidth + "    " + preHeight);		
+		preHeight = previewheight;
+		System.out.println("预览分辨率：" + preWidth + "    " + preHeight);
 		parameters.setPictureFormat(PixelFormat.JPEG);
 		parameters.setPreviewSize(preWidth, preHeight);
-		if (parameters.getSupportedFocusModes().contains(
-				parameters.FOCUS_MODE_CONTINUOUS_PICTURE)
-				&& !isAutoFocus) {
-			isAutoFocus = false;
-			if (timer != null) {
+		if(parameters.getSupportedFocusModes().contains(parameters.FOCUS_MODE_CONTINUOUS_PICTURE)&&!isAutoFocus)
+		{
+			isAutoFocus=false;
+			if(timer!=null){
 				timer.cancel();
-				timer = null;
+				timer=null;
 			}
-			parameters
-					.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-		} else
-		if (parameters.getSupportedFocusModes().contains(
-				parameters.FOCUS_MODE_AUTO)) {
-			isAutoFocus = true;
+			parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+		}else
+		if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_AUTOFOCUS))
+		{
+
+			isAutoFocus=true;
 			parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
 		}
+		// parameters.setFlashMode(Parameters.FLASH_MODE_TORCH);
+		// parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+		// setDispaly(parameters,camera);
+		// parameters.setExposureCompensation(0);
+
 		camera.setParameters(parameters);
-		camera.setDisplayOrientation(rotation);
-		try {
+		if (rotation == 90 || rotation == 270)
+		{
+			if (width < 1080)
+			{
+				camera.stopPreview();
+				camera.setPreviewCallback(null);
+			}
+		}
+		else
+		{
+			if (height < 1080)
+			{
+				camera.stopPreview();
+				camera.setPreviewCallback(null);
+			}
+		}
+
+		camera.setDisplayOrientation(r);
+
+		try
+		{
 			camera.setPreviewDisplay(holder);
-		} catch (IOException e) {
+		}
+		catch (IOException e)
+		{
 			e.printStackTrace();
 		}
 		camera.setPreviewCallback(MemoryCameraActivity.this);
@@ -736,16 +797,32 @@ public class MemoryCameraActivity extends Activity implements
 
 	}
 
-	int[] fieldname = { R.string.plate_number, R.string.plate_color,
-			R.string.plate_color_code, R.string.plate_type_code,
-			R.string.plate_reliability, R.string.plate_brightness_reviews,
-			R.string.plate_move_orientation, R.string.plate_leftupper_pointX,
-			R.string.plate_leftupper_pointY, R.string.plate_rightdown_pointX,
-			R.string.plate_rightdown_pointY, R.string.plate_elapsed_time,
-			R.string.plate_light, R.string.plate_car_color };
+	int[] fieldname = { R.string.plate_number, R.string.plate_color, R.string.plate_color_code, R.string.plate_type_code,
+			R.string.plate_reliability, R.string.plate_brightness_reviews, R.string.plate_move_orientation,
+			R.string.plate_leftupper_pointX, R.string.plate_leftupper_pointY, R.string.plate_rightdown_pointX,
+			R.string.plate_rightdown_pointY, R.string.plate_elapsed_time, R.string.plate_light, R.string.plate_car_color };
+
+	final int requestCodeOcr = 1001;
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == requestCodeOcr && resultCode == RESULT_OK){
+			String carNo = data.getStringExtra("carNo");
+			Intent old = getIntent();
+			old.putExtra("carNo", carNo);
+			setResult(RESULT_OK, old);
+			finish();
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+	private void sendCarNo(String carNo){
+		Intent old = getIntent();
+		old.putExtra("carNo", carNo);
+		setResult(RESULT_OK, old);
+		finish();
+	}
 
 	/**
-	 * 
+	 *
 	 * @Title: getResult
 	 * @Description: TODO(获取结果)
 	 * @param @param fieldvalue 调用识别接口返回的数据
@@ -753,14 +830,15 @@ public class MemoryCameraActivity extends Activity implements
 	 * @throwsbyte[]picdata
 	 */
 
-	private void getResult(String[] fieldvalue) { 
+	private void getResult(String[] fieldvalue){
 
 		if (nRet != 0)
-		// 未通过验证 将对应错误码返回
+		//未通过验证  将对应错误码返回
 		{
 			feedbackWrongCode();
-		} else {
-			// 通过验证 获取识别结果
+		}
+		else{
+			//通过验证   获取识别结果
 			String result = "";
 			String[] resultString;
 			String timeString = "";
@@ -768,113 +846,118 @@ public class MemoryCameraActivity extends Activity implements
 			boolString = fieldvalue[0];
 
 			if (boolString != null && !boolString.equals(""))
-			// 检测到车牌后执行下列代码
+			//检测到车牌后执行下列代码
 			{
 
 				resultString = boolString.split(";");
 				int lenght = resultString.length;
 				// Log.e("DEBUG", "nConfidence:" +
 				// fieldvalue[4]);
-				if (lenght > 0) {
+				if (lenght > 0)
+				{
 
 					String[] strarray = fieldvalue[4].split(";");
 
-					// 静态识别下 判断图像清晰度是否大于75
+					//静态识别下  判断图像清晰度是否大于75
 
-					if (recogType ? true : Integer.valueOf(strarray[0]) > 75) {
+					if (recogType ? true : Integer.valueOf(strarray[0]) > 75)
+					{
+
 
 						tempData = recogBinder.getRecogData();
 
-						if (tempData != null) {
+						if (tempData != null)
+						{
 
-							if (lenght == 1) {
+							if (lenght == 1)
+							{
 
-								if (fieldvalue[11] != null
-										&& !fieldvalue[11].equals("")) {
+								if (fieldvalue[11] != null && !fieldvalue[11].equals(""))
+								{
 									int time = Integer.parseInt(fieldvalue[11]);
 									time = time / 1000;
 									timeString = "" + time;
-								} else {
+								}
+								else
+								{
 									timeString = "null";
 								}
 
-								if (null != fieldname) {
+								if (null != fieldname)
+								{
 
-									BitmapFactory.Options options = new BitmapFactory.Options();
-									options.inPreferredConfig = Config.ARGB_8888;
-									options.inPurgeable = true;
-									options.inInputShareable = true;
-									ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-									int Height = 0, Width = 0;
-									if (rotation == 90 || rotation == 270) {
-										Height = preWidth;
-										Width = preHeight;
-									} else if (rotation == 180 || rotation == 0) {
-										Height = preHeight;
-										Width = preWidth;
-									}
-									YuvImage yuvimage = new YuvImage(tempData,
-											ImageFormat.NV21, Width, Height,
-											null);
-									yuvimage.compressToJpeg(new Rect(0, 0,
-											Width, Height), 100, baos);
-
-									bitmap = BitmapFactory.decodeByteArray(
-											baos.toByteArray(), 0, baos.size(),
-											options);
-
-//									bitmap1 = Bitmap.createBitmap(bitmap, 0, 0,
-//											bitmap.getWidth(),
+//									BitmapFactory.Options options = new BitmapFactory.Options();
+//									options.inPreferredConfig = Config.ARGB_8888;
+//									options.inPurgeable = true;
+//									options.inInputShareable = true;
+//									ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//
+//										int Height = 0,Width = 0;
+//										if (rotation == 90||rotation == 270)
+//										{
+//											Height = preWidth;
+//											Width = preHeight;
+//										}
+//										else if (rotation == 180||rotation == 0)
+//										{
+//											Height = preHeight;
+//											Width = preWidth;
+//										}
+//										YuvImage yuvimage = new YuvImage(tempData, ImageFormat.NV21, Width,Height, null);
+//										yuvimage.compressToJpeg(new Rect(0, 0, Width,Height), 100, baos);
+//
+//									 bitmap = BitmapFactory.decodeByteArray(baos.toByteArray(), 0, baos.size(), options);
+//
+//									bitmap1= Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
 //											bitmap.getHeight(), null, true);
-//									System.out.println("保存图片-------------");
-									path = savePicture(bitmap);
-									
-									 mVibrator = (Vibrator) getApplication()
-									 .getSystemService(
-									 Service.VIBRATOR_SERVICE);
-									 mVibrator.vibrate(100);
-									closeCamera();
-									Intent intent = new Intent(
-											MemoryCameraActivity.this,
-											MemoryResultActivity.class);
-									number = fieldvalue[0];
-									color = fieldvalue[1];
+//									String path = savePicture(bitmap1);
 
-									int left = Integer.valueOf(fieldvalue[7]);
-									int top = Integer.valueOf(fieldvalue[8]);
-									int w = Integer.valueOf(fieldvalue[9])
-											- Integer.valueOf(fieldvalue[7]);
-									int h = Integer.valueOf(fieldvalue[10])
-											- Integer.valueOf(fieldvalue[8]);
-									intent.putExtra("number", number);
-									intent.putExtra("color", color);
-									intent.putExtra("path", path);
-									intent.putExtra("left", left);
-									intent.putExtra("top", top);
-									intent.putExtra("width", w);
-									intent.putExtra("height", h);
-									intent.putExtra("time", fieldvalue[11]);
-									intent.putExtra("recogType", recogType);
-									new FrameCapture(intentNV21data, preWidth,
-											preHeight, "10");
-									startActivity(intent);	
-									MemoryCameraActivity.this.finish();
+									mVibrator = (Vibrator) getApplication().getSystemService(
+											Service.VIBRATOR_SERVICE);
+									mVibrator.vibrate(100);
+									closeCamera();
+//									Intent intent = new Intent(MemoryCameraActivity.this,
+//											MemoryResultActivity.class);
+									number = fieldvalue[0];
+//									color = fieldvalue[1];
+//
+//									int left = Integer.valueOf(fieldvalue[7]);
+//									int top = Integer.valueOf(fieldvalue[8]);
+//									int w = Integer.valueOf(fieldvalue[9])
+//											- Integer.valueOf(fieldvalue[7]);
+//									int h = Integer.valueOf(fieldvalue[10])
+//											- Integer.valueOf(fieldvalue[8]);
+//									intent.putExtra("number", number);
+//
+//									intent.putExtra("color", color);
+////									intent.putExtra("path", path);
+//									intent.putExtra("left", left);
+//									intent.putExtra("top", top);
+//									intent.putExtra("width", w);
+//									intent.putExtra("height", h);
+//									intent.putExtra("time", fieldvalue[11]);
+//									intent.putExtra("recogType", recogType);
+//									startActivityForResult(intent, requestCodeOcr);
+									//2016-6-26,吴大威 直接返回
+									sendCarNo(number);
+//									new FrameCapture(intentNV21data, preWidth, preHeight, "10");
+//									MemoryCameraActivity.this.finish();
 
 								}
 
-							} else {
+							}
+							else
+							{
 								String itemString = "";
 
-								mVibrator = (Vibrator) getApplication()
-										.getSystemService(
-												Service.VIBRATOR_SERVICE);
+								mVibrator = (Vibrator) getApplication().getSystemService(
+										Service.VIBRATOR_SERVICE);
 								mVibrator.vibrate(100);
 								closeCamera();
-								Intent intent = new Intent(
-										MemoryCameraActivity.this,
+								Intent intent = new Intent(MemoryCameraActivity.this,
 										MemoryResultActivity.class);
-								for (int i = 0; i < lenght; i++) {
+								for (int i = 0; i < lenght; i++)
+								{
 
 									itemString = fieldvalue[0];
 									resultString = itemString.split(";");
@@ -890,79 +973,86 @@ public class MemoryCameraActivity extends Activity implements
 									//
 
 								}
+
 								intent.putExtra("number", number);
 								intent.putExtra("color", color);
 								intent.putExtra("time", resultString);
 								intent.putExtra("recogType", recogType);
-								MemoryCameraActivity.this.finish();
-								startActivity(intent);
+//								startActivityForResult(intent, requestCodeOcr);
 
-								
+								//2016-6-26,吴大威 直接返回
+								sendCarNo(number);
+//								MemoryCameraActivity.this.finish();
 							}
 						}
 					}
 
 				}
 
-			} else
-			// 未检测到车牌时执行下列代码
+			}
+			else
+			//未检测到车牌时执行下列代码
 			{
 				if (!recogType)
-				// 预览识别执行下列代码 不是预览识别 不做处理等待下一帧
+				//预览识别执行下列代码   不是预览识别  不做处理等待下一帧
 				{
-					;
-					if (picData != null) {
+
+					if (picData != null)
+					{
 
 						BitmapFactory.Options options = new BitmapFactory.Options();
 						options.inPreferredConfig = Config.ARGB_8888;
 						options.inPurgeable = true;
 						options.inInputShareable = true;
 						ByteArrayOutputStream baos = new ByteArrayOutputStream();
-						YuvImage yuvimage = new YuvImage(picData,
-								ImageFormat.NV21, preWidth, preHeight, null);
-						yuvimage.compressToJpeg(new Rect(0, 0, preWidth,
-								preHeight), 100, baos);
-						bitmap = BitmapFactory.decodeByteArray(
-								baos.toByteArray(), 0, baos.size(), options);
+						YuvImage yuvimage = new YuvImage(picData, ImageFormat.NV21, preWidth,preHeight, null);
+						yuvimage.compressToJpeg(new Rect(0, 0, preWidth,preHeight), 100, baos);
+						bitmap = BitmapFactory.decodeByteArray(baos.toByteArray(), 0, baos.size(), options);
 
 						Matrix matrix = new Matrix();
 						matrix.reset();
-						if (rotation == 90) {
+						if (rotation == 90)
+						{
 							matrix.setRotate(90);
-						} else if (rotation == 180) {
+						}
+						else if (rotation == 180)
+						{
 							matrix.setRotate(180);
-						} else if (rotation == 270) {
+						}
+						else if (rotation == 270)
+						{
 							matrix.setRotate(270);
 							//
 						}
-						bitmap1 = Bitmap.createBitmap(bitmap, 0, 0,
-								bitmap.getWidth(), bitmap.getHeight(), matrix,
+						bitmap1 = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix,
 								true);
-						path = savePicture(bitmap1);
+						String path = savePicture(bitmap1);
 
-						if (fieldvalue[11] != null
-								&& !fieldvalue[11].equals("")) {
+						if (fieldvalue[11] != null && !fieldvalue[11].equals(""))
+						{
 							int time = Integer.parseInt(fieldvalue[11]);
 							time = time / 1000;
 							timeString = "" + time;
-						} else {
+						}
+						else
+						{
 							timeString = "null";
 						}
 
-						if (null != fieldname) {
-							mVibrator = (Vibrator) getApplication()
-									.getSystemService(Service.VIBRATOR_SERVICE);
+						if (null != fieldname)
+						{
+							mVibrator = (Vibrator) getApplication().getSystemService(Service.VIBRATOR_SERVICE);
 							mVibrator.vibrate(100);
 							closeCamera();
-							Intent intent = new Intent(
-									MemoryCameraActivity.this,
-									MemoryResultActivity.class);
+							Intent intent = new Intent(MemoryCameraActivity.this, MemoryResultActivity.class);
 							number = fieldvalue[0];
 							color = fieldvalue[1];
-							if (fieldvalue[0] == null) {
+							if (fieldvalue[0] == null)
+							{
 								number = "null";
 							}
-							if (fieldvalue[1] == null) {
+							if (fieldvalue[1] == null)
+							{
 								color = "null";
 							}
 							int left = prp.plateIDCfg.left;
@@ -978,10 +1068,12 @@ public class MemoryCameraActivity extends Activity implements
 							intent.putExtra("width", w);
 							intent.putExtra("height", h);
 							intent.putExtra("time", fieldvalue[11]);
-							intent.putExtra("recogType", recogType);							
-							MemoryCameraActivity.this.finish();
-							startActivity(intent);
+							intent.putExtra("recogType", recogType);
+//								startActivityForResult(intent, requestCodeOcr);
 
+							//2016-6-26,吴大威 直接返回
+							sendCarNo(number);
+//								MemoryCameraActivity.this.finish();
 						}
 					}
 				}
@@ -992,54 +1084,54 @@ public class MemoryCameraActivity extends Activity implements
 		fieldvalue = null;
 	}
 
+
+
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-		if (bitmap != null) {
-			if (!bitmap.isRecycled()) {
+		if (bitmap != null){
+			if (!bitmap.isRecycled())
+			{
 				bitmap.recycle();
 				bitmap = null;
 			}
 
 		}
 		if (bitmap1 != null) {
-			if (!bitmap1.isRecycled()) {
+			if (!bitmap1.isRecycled())
+			{
 				bitmap1.recycle();
 				bitmap1 = null;
 			}
 
 		}
 
-		if (mVibrator != null) {
+		if (mVibrator!=null) {
 			mVibrator.cancel();
 		}
 		if (recogBinder != null) {
+
 			unbindService(recogConn);
-			recogBinder = null;
+		}
 
-		}	
+
 	}
-
 	/**
 	 * @Title: closeCamera
 	 * @Description: TODO(这里用一句话描述这个方法的作用) 关闭相机
 	 * @param
-	 * @return void 返回类型
+	 * @return void    返回类型 初始化返回值
 	 * @throws
 	 */
 	private void closeCamera() {
 		// TODO Auto-generated method stub
-		System.out.println("关闭相机 ");
+
 		synchronized (this) {
 			try {
-				if (timer != null) {
-					timer.cancel();
-					timer = null;
-				}
-				if (time != null) {
+				if(time!=null){
 					time.cancel();
-					time = null;
+					time=null;
 				}
 				if (camera != null) {
 					camera.setPreviewCallback(null);
@@ -1053,144 +1145,159 @@ public class MemoryCameraActivity extends Activity implements
 			}
 		}
 	}
-
-	private void feedbackWrongCode() {
+	private void feedbackWrongCode(){
 		String nretString = nRet + "";
-		if (nretString.equals("-1001")) {
-			Toast.makeText(
-					MemoryCameraActivity.this,
+		if (nretString.equals("-1001"))
+		{
+			Toast.makeText(MemoryCameraActivity.this,
 					getString(R.string.recognize_result) + nRet + "\n"
-							+ getString(R.string.failed_readJPG_error),
-					Toast.LENGTH_SHORT).show();
+							+ getString(R.string.failed_readJPG_error), Toast.LENGTH_SHORT).show();
 
-		} else if (nretString.equals("-10001")) {
-			Toast.makeText(
-					MemoryCameraActivity.this,
+		}
+		else if (nretString.equals("-10001"))
+		{
+			Toast.makeText(MemoryCameraActivity.this,
 					getString(R.string.recognize_result) + nRet + "\n"
-							+ getString(R.string.failed_noInit_function),
-					Toast.LENGTH_SHORT).show();
+							+ getString(R.string.failed_noInit_function), Toast.LENGTH_SHORT)
+					.show();
 
-		} else if (nretString.equals("-10003")) {
-			Toast.makeText(
-					MemoryCameraActivity.this,
+		}
+		else if (nretString.equals("-10003"))
+		{
+			Toast.makeText(MemoryCameraActivity.this,
 					getString(R.string.recognize_result) + nRet + "\n"
-							+ getString(R.string.failed_validation_faile),
-					Toast.LENGTH_SHORT).show();
+							+ getString(R.string.failed_validation_faile), Toast.LENGTH_SHORT)
+					.show();
 
-		} else if (nretString.equals("-10004")) {
-			Toast.makeText(
-					MemoryCameraActivity.this,
+		}
+		else if (nretString.equals("-10004"))
+		{
+			Toast.makeText(MemoryCameraActivity.this,
 					getString(R.string.recognize_result) + nRet + "\n"
-							+ getString(R.string.failed_serial_number_null),
-					Toast.LENGTH_SHORT).show();
+							+ getString(R.string.failed_serial_number_null), Toast.LENGTH_SHORT)
+					.show();
 
-		} else if (nretString.equals("-10005")) {
-			Toast.makeText(
-					MemoryCameraActivity.this,
+		}
+		else if (nretString.equals("-10005"))
+		{
+			Toast.makeText(MemoryCameraActivity.this,
 					getString(R.string.recognize_result) + nRet + "\n"
-							+ getString(R.string.failed_disconnected_server),
-					Toast.LENGTH_SHORT).show();
+							+ getString(R.string.failed_disconnected_server), Toast.LENGTH_SHORT)
+					.show();
 
-		} else if (nretString.equals("-10006")) {
-			Toast.makeText(
-					MemoryCameraActivity.this,
+		}
+		else if (nretString.equals("-10006"))
+		{
+			Toast.makeText(MemoryCameraActivity.this,
 					getString(R.string.recognize_result) + nRet + "\n"
 							+ getString(R.string.failed_obtain_activation_code),
 					Toast.LENGTH_SHORT).show();
 
-		} else if (nretString.equals("-10007")) {
-			Toast.makeText(
-					MemoryCameraActivity.this,
+		}
+		else if (nretString.equals("-10007"))
+		{
+			Toast.makeText(MemoryCameraActivity.this,
 					getString(R.string.recognize_result) + nRet + "\n"
-							+ getString(R.string.failed_noexist_serial_number),
-					Toast.LENGTH_SHORT).show();
+							+ getString(R.string.failed_noexist_serial_number), Toast.LENGTH_SHORT)
+					.show();
 
-		} else if (nretString.equals("-10008")) {
-			Toast.makeText(
-					MemoryCameraActivity.this,
+		}
+		else if (nretString.equals("-10008"))
+		{
+			Toast.makeText(MemoryCameraActivity.this,
 					getString(R.string.recognize_result) + nRet + "\n"
-							+ getString(R.string.failed_serial_number_used),
-					Toast.LENGTH_SHORT).show();
+							+ getString(R.string.failed_serial_number_used), Toast.LENGTH_SHORT)
+					.show();
 
-		} else if (nretString.equals("-10009")) {
-			Toast.makeText(
-					MemoryCameraActivity.this,
+		}
+		else if (nretString.equals("-10009"))
+		{
+			Toast.makeText(MemoryCameraActivity.this,
 					getString(R.string.recognize_result) + nRet + "\n"
 							+ getString(R.string.failed_unable_create_authfile),
 					Toast.LENGTH_SHORT).show();
 
-		} else if (nretString.equals("-10010")) {
-			Toast.makeText(
-					MemoryCameraActivity.this,
-					getString(R.string.recognize_result) + nRet + "\n"
-							+ getString(R.string.failed_check_activation_code),
-					Toast.LENGTH_SHORT).show();
-
-		} else if (nretString.equals("-10011")) {
-			Toast.makeText(
-					MemoryCameraActivity.this,
-					getString(R.string.recognize_result) + nRet + "\n"
-							+ getString(R.string.failed_other_errors),
-					Toast.LENGTH_SHORT).show();
-
-		} else if (nretString.equals("-10012")) {
-			Toast.makeText(
-					MemoryCameraActivity.this,
-					getString(R.string.recognize_result) + nRet + "\n"
-							+ getString(R.string.failed_not_active),
-					Toast.LENGTH_SHORT).show();
-
-		} else if (nretString.equals("-10015")) {
-			Toast.makeText(
-					MemoryCameraActivity.this,
-					getString(R.string.recognize_result) + nRet + "\n"
-							+ getString(R.string.failed_check_failure),
-					Toast.LENGTH_SHORT).show();
-
-		} else {
+		}
+		else if (nretString.equals("-10010"))
+		{
 			Toast.makeText(MemoryCameraActivity.this,
-					getString(R.string.recognize_result) + nRet + "\n",
+					getString(R.string.recognize_result) + nRet + "\n"
+							+ getString(R.string.failed_check_activation_code), Toast.LENGTH_SHORT)
+					.show();
+
+		}
+		else if (nretString.equals("-10011"))
+		{
+			Toast.makeText(MemoryCameraActivity.this,
+					getString(R.string.recognize_result) + nRet + "\n"
+							+ getString(R.string.failed_other_errors), Toast.LENGTH_SHORT).show();
+
+		}
+		else if (nretString.equals("-10012"))
+		{
+			Toast.makeText(MemoryCameraActivity.this,
+					getString(R.string.recognize_result) + nRet + "\n"
+							+ getString(R.string.failed_not_active), Toast.LENGTH_SHORT).show();
+
+		}
+		else if (nretString.equals("-10015"))
+		{
+			Toast.makeText(MemoryCameraActivity.this,
+					getString(R.string.recognize_result) + nRet + "\n"
+							+ getString(R.string.failed_check_failure), Toast.LENGTH_SHORT).show();
+
+		}
+		else
+		{
+			Toast.makeText(MemoryCameraActivity.this, getString(R.string.recognize_result) + nRet + "\n",
 					Toast.LENGTH_SHORT).show();
 
 		}
 	}
-
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			Intent intent  = new Intent("kernal.plateid.MainActivity");
-			startActivity(intent);
+	public boolean onKeyDown(int keyCode, KeyEvent event)
+	{
+		if (keyCode == KeyEvent.KEYCODE_BACK)
+		{
+
 			closeCamera();
 			finish();
 		}
 		return super.onKeyDown(keyCode, event);
 	}
-	//保存图片
-	public String savePicture(Bitmap bitmap) {
+
+	public String savePicture(Bitmap bitmap)
+	{
 		String strCaptureFilePath = PATH + "plateID_" + pictureName() + ".jpg";
 		File dir = new File(PATH);
-		if (!dir.exists()) {
+		if (!dir.exists())
+		{
 			dir.mkdirs();
 		}
 		File file = new File(strCaptureFilePath);
-		if (file.exists()) {
+		if (file.exists())
+		{
 			file.delete();
 		}
-		try {
+		try
+		{
 			file.createNewFile();
-			BufferedOutputStream bos = new BufferedOutputStream(
-					new FileOutputStream(file));
+			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+
 			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
 			bos.flush();
 			bos.close();
 
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 		}
 		return strCaptureFilePath;
 	}
-	//图片命名，以时间为名
-	public String pictureName() {
+
+	public String pictureName()
+	{
 		String str = "";
 		Time t = new Time();
 		t.setToNow(); // 取得系统时间。
@@ -1202,171 +1309,93 @@ public class MemoryCameraActivity extends Activity implements
 		int second = t.second;
 		if (month < 10)
 			str = String.valueOf(year) + "0" + String.valueOf(month);
-		else {
+		else
+		{
 			str = String.valueOf(year) + String.valueOf(month);
 		}
 		if (date < 10)
 			str = str + "0" + String.valueOf(date + "_");
-		else {
+		else
+		{
 			str = str + String.valueOf(date + "_");
 		}
 		if (hour < 10)
 			str = str + "0" + String.valueOf(hour);
-		else {
+		else
+		{
 			str = str + String.valueOf(hour);
 		}
 		if (minute < 10)
 			str = str + "0" + String.valueOf(minute);
-		else {
+		else
+		{
 			str = str + String.valueOf(minute);
 		}
 		if (second < 10)
 			str = str + "0" + String.valueOf(second);
-		else {
+		else
+		{
 			str = str + String.valueOf(second);
 		}
 		return str;
 	}
-
 	/**
-	 * @param mDecorView
-	 *            {tags} 设定文件
-	 * @return ${return_type} 返回类型
+	 * @param mDecorView{tags} 设定文件
+	 * @return ${return_type}    返回类型
 	 * @throws
 	 * @Title: 沉寂模式
 	 * @Description: 隐藏虚拟按键
 	 */
-	// @TargetApi(19)
-	// public void hiddenVirtualButtons(View mDecorView) {
-	// if (Build.VERSION.SDK_INT >= 19) {
-	// mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-	// | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-	// | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-	// | View.SYSTEM_UI_FLAG_FULLSCREEN
-	// | View.SYSTEM_UI_FLAG_IMMERSIVE);
-	// }
-	// }
+//    @TargetApi(19)
+//    public void hiddenVirtualButtons(View mDecorView) {
+//        if (Build.VERSION.SDK_INT >= 19) {
+//            mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+//                    | View.SYSTEM_UI_FLAG_IMMERSIVE);
+//        }
+//    }
 	/**
-	 * 
+	 *
 	 * @Title: setScreenSize
 	 * @Description: TODO(这里用一句话描述这个方法的作用) 获取屏幕真实分辨率，不受虚拟按键影响
-	 * @param @param context 设定文件
-	 * @return void 返回类型
+	 * @param @param context    设定文件
+	 * @return void    返回类型
 	 * @throws
 	 */
-	@SuppressLint("NewApi")
-	private void setScreenSize(Context context) {
+	@SuppressLint("NewApi") private void setScreenSize(Context context)
+	{
 		int x, y;
-		WindowManager wm = ((WindowManager) context
-				.getSystemService(Context.WINDOW_SERVICE));
+		WindowManager wm = ((WindowManager)
+				context.getSystemService(Context.WINDOW_SERVICE));
 		Display display = wm.getDefaultDisplay();
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2)
+		{
 			Point screenSize = new Point();
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+			{
 				display.getRealSize(screenSize);
 				x = screenSize.x;
 				y = screenSize.y;
-			} else {
+			} else
+			{
 				display.getSize(screenSize);
 				x = screenSize.x;
 				y = screenSize.y;
 			}
-		} else {
+		} else
+		{
 			x = display.getWidth();
 			y = display.getHeight();
 		}
+
 		width = x;
 		height = y;
 	}
-	//获取屏幕尺寸
-	public void getScreenSize(){
-		DisplayMetrics dm = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(dm);
-		screenWidth = dm.widthPixels;
-		screenHeight = dm.heightPixels;
-	}
-	//根据屏幕尺寸以及预览分辨率  给surfaceView重新定义尺寸，避免图像拉伸情况的出现
-	 public void getPreToChangView(int preWidth ,int preHeight ){
-		 //横屏下
-		if(width>=height){		
-			if(preWidth*screenHeight<preHeight*screenWidth){
-					//左右留边
-				int tempValue=screenHeight*preWidth/preHeight;
-					LayoutParams layoutParams= new LayoutParams(tempValue, RelativeLayout.TRUE);
-					layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-					surfaceView.setLayoutParams(layoutParams);
-			 }else if(preWidth*screenHeight>preHeight*screenWidth){//上下留边	
-					int tempValue=screenWidth*preHeight/preWidth;
-				 LayoutParams layoutParams= new LayoutParams(RelativeLayout.TRUE, tempValue);
-				 layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-					surfaceView.setLayoutParams(layoutParams);					
-			 }else if(preWidth*screenHeight==preHeight*screenWidth){
-				 LayoutParams layoutParams= new LayoutParams(RelativeLayout.TRUE, RelativeLayout.TRUE);
-					surfaceView.setLayoutParams(layoutParams);		
-			 }
-		} 
-		//竖屏下
-		if(height>=width){		
-			if(preWidth*screenWidth<preHeight*screenHeight){//上下留边		
-				int tempValue=screenWidth*preWidth/preHeight;
-					LayoutParams layoutParams= new LayoutParams(RelativeLayout.TRUE,tempValue);
-					layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-					surfaceView.setLayoutParams(layoutParams);
-				}else if(preWidth*screenWidth>preHeight*screenHeight){//左右留边		
-					int tempValue=screenHeight*preHeight/preWidth;
-					LayoutParams layoutParams= new LayoutParams(tempValue, RelativeLayout.TRUE);
-					 layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-					surfaceView.setLayoutParams(layoutParams);
-				}else if(preWidth*screenWidth==preHeight*screenHeight){
-					LayoutParams layoutParams= new LayoutParams(RelativeLayout.TRUE, RelativeLayout.TRUE);
-					surfaceView.setLayoutParams(layoutParams);
-				}
-		}
-			}
-	    	
-	    public void OpenCameraAndSetParameters(){
-	    	try{
-	 	       if (null == camera) {
-	 	            camera = Camera.open();   	 	            
-	 	       }
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-	 	      setRotationAndView(uiRot,camera);
-	 	           if (timer == null) {
-	 					timer = new TimerTask() {
-	 						public void run() {
-	 							// isSuccess=false;
-	 							if (camera != null) {
-	 								try {
-	 									camera.autoFocus(new AutoFocusCallback() {
-	 										public void onAutoFocus(boolean success,
-	 												Camera camera) {
-	 											// isSuccess=success;	 									
-	 										}
-	 									});
-	 								} catch (Exception e) {
-	 									e.printStackTrace();
-	 								}
-	 							}
-	 						};
-	 					};
-	 				}
-	 				time = new Timer();
-	 				time.schedule(timer, 500, 2500);
-	 	            if(isOnResume){
-	 	            initCamera(holder, initPreWidth, initPreHeight); 
-	 	           	getPreToChangView(preWidth, preHeight);
-					if(myview==null){
-						if (rotation == 90 || rotation == 270) {
-							myview = new ViewfinderView(MemoryCameraActivity.this, false,
-									preWidth, preHeight);
-						} else {
-							myview = new ViewfinderView(MemoryCameraActivity.this, true,
-									preWidth, preHeight);
-						}
-						re.addView(myview);
-					}
-	 	            }
-	    }
+
+
+
+
+
 }
