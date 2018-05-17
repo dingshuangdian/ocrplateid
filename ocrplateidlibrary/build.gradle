@@ -26,5 +26,6 @@ dependencies {
     compile files('src/main/jniLibs/ksoap2-android-assembly-2.4-jar-with-dependencies.jar')
     compile files('src/main/jniLibs/pki.jar')
     compile files('src/main/jniLibs/plate_id_sdk.jar')
-    compile files('src/main/jniLibs/android-support-v4.jar')
+	compile "com.android.support:support-v4:22.2.0"
+  
 }
