@@ -1,15 +1,18 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+
+group='com.github.dingshuangdian'
 buildscript {
   repositories {
 		mavenCentral()
 	}
 
 	dependencies {
+		classpath 'com.android.tools.build:gradle:3.0.0'
 		classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
 	}
 }
-//apply plugin: 'com.android.library'
-//apply plugin: 'dingshuangdian'
+
 
 android {
     compileSdkVersion 23
