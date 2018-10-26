@@ -8,7 +8,7 @@ buildscript {
 	}
 
 	dependencies {
-		
+
 		classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
 	}
 }
@@ -16,7 +16,7 @@ buildscript {
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '23.0.3'
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         minSdkVersion 14
@@ -41,5 +41,5 @@ dependencies {
     compile files('src/main/jniLibs/pki.jar')
     compile files('src/main/jniLibs/plate_id_sdk.jar')
 	compile "com.android.support:support-v4:22.2.0"
-  
+
 }
