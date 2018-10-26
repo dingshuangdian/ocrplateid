@@ -1,17 +1,28 @@
-apply plugin: 'com.android.library'
-
-
-group='com.github.dingshuangdian'
+ext {
+  apply from: 'cordova.gradle'
+  cdvCompileSdkVersion = privateHelpers.getProjectTarget()
+  cdvBuildToolsVersion = privateHelpers.findLatestInstalledBuildTools()
+}
 buildscript {
   repositories {
-		mavenCentral()
-	}
+    jcenter()
+    maven {
+      url "https://maven.google.com"
+    }
+    google()
+  }
 
-	dependencies {
-
-		classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
-	}
+  dependencies {
+    classpath 'com.android.tools.build:gradle:3.0.0'
+    classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+    classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+  }
 }
+apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+group = 'dingshuangdian'
+version = '1.0.1'
 
 
 android {
