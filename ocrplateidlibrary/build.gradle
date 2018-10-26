@@ -9,7 +9,7 @@ buildscript {
 	}
 }
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dingshuangdian'
+apply plugin: 'dingshuangdian'
 
 android {
     compileSdkVersion 23
