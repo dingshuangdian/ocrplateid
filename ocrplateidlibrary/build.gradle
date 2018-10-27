@@ -1,5 +1,4 @@
 ext {
-  apply from: 'cordova.gradle'
   cdvCompileSdkVersion = privateHelpers.getProjectTarget()
   cdvBuildToolsVersion = privateHelpers.findLatestInstalledBuildTools()
 }
