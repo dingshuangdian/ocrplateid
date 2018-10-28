@@ -1258,7 +1258,7 @@ public class MemoryCameraActivity extends Activity implements SurfaceHolder.Call
 		{
 
 			closeCamera();
-			//finish();
+			finish();
 		}
 		return super.onKeyDown(keyCode, event);
 	}

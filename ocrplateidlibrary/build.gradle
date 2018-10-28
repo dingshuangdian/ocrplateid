@@ -1,32 +1,11 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
 
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
-
-allprojects {
-    repositories {
-        jcenter()
-        maven { url "https://jitpack.io" }
-    }
-}
-
-
-group = 'dingshuangdian'
-version = '1.0.8'
-
+group='com.github.dingshuangdian'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         minSdkVersion 14
@@ -43,13 +22,13 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    compile files('src/main/jniLibs/android_auth.jar')
-    compile files('src/main/jniLibs/bcprov-ext-jdk15-146.jar')
-    compile files('src/main/jniLibs/ksoap2-android-assembly-2.4-jar-with-dependencies.jar')
-    compile files('src/main/jniLibs/pki.jar')
-    compile files('src/main/jniLibs/plate_id_sdk.jar')
-	compile "com.android.support:support-v4:22.2.0"
-
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    implementation files('src/main/jniLibs/android_auth.jar')
+    implementation files('src/main/jniLibs/bcprov-ext-jdk15-146.jar')
+    implementation files('src/main/jniLibs/ksoap2-android-assembly-2.4-jar-with-dependencies.jar')
+    implementation files('src/main/jniLibs/pki.jar')
+    implementation files('src/main/jniLibs/plate_id_sdk.jar')
+    implementation "com.android.support:support-v4:22.2.0"
+  
 }
