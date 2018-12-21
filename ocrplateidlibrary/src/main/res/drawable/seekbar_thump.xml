@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">-->
+
+    <!--<size-->
+        <!--android:width="40dp"-->
+        <!--android:height="40dp"-->
+        <!--/>-->
+    <!--<solid android:color="#60f0"/>-->
+<!--</shape>-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item>
+        <shape>
+            <size
+                android:height="30dp"
+                android:width="30dp" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/seekbar_thump_pic"/>
+</layer-list>

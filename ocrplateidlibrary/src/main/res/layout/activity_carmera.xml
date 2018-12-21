@@ -1,0 +1,62 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/memory"
+    tools:context="com.kernal.plateid.MemoryCameraActivity" >
+
+    <!--<SurfaceView-->
+        <!--android:id="@+id/surfaceViwe_video"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="fill_parent" />-->
+
+    <!--<ImageButton-->
+        <!--android:id="@+id/back_camera"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="@drawable/back_camera_btn" />-->
+    <fragment
+        android:id="@+id/sampleFragment"
+        android:name="utills.CameraFragment"
+        android:layout_width="fill_parent"
+        android:layout_centerInParent="true"
+        android:layout_height="fill_parent">
+
+    </fragment>
+        <!--android:background="#ff000f"/>-->
+    <ImageButton
+        android:id="@+id/flash_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/flash_camera_btn" />
+<ImageButton
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/back_btn" />
+<ImageButton
+        android:id="@+id/take_pic_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/tack_pic_btn" />
+
+    <SeekBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBar"
+        android:indeterminate="false"
+        android:maxHeight="4.0dip"
+        android:thumb="@drawable/seekbar_thump"
+        android:progressDrawable="@drawable/seekbar_bg"/>
+    <view.VerticalSeekBar
+        android:id="@+id/verticalSeekBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="false"
+        android:maxHeight="4.0dip"
+        android:thumb="@drawable/seekbar_thump"
+        android:progressDrawable="@drawable/seekbar_bg"
+       />
+
+
+</RelativeLayout>
