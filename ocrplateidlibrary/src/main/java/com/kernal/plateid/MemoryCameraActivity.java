@@ -62,7 +62,7 @@ public class MemoryCameraActivity extends Activity {
 	private Vibrator mVibrator;
 	private PlateRecognitionParameter prp = new PlateRecognitionParameter();;
 	private boolean recogType;// 记录进入此界面时是拍照识别还是视频识别 true:视频识别 false:拍照识别
-	private String path;// 圖片保存的路徑
+	//private String path;// 圖片保存的路徑
 	private SensorManager sensorManager;
 	private float x,y,z;
 	//向左旋转
@@ -359,8 +359,8 @@ public class MemoryCameraActivity extends Activity {
 	 * @throwsbyte[]picdata
 	 */
 
-	public void getResult(String[] fieldvalue,String path) {
-		     this.path=path;
+	public void getResult(String[] fieldvalue) {
+		     //this.path=path;
 			if (fieldvalue[0] != null && !fieldvalue[0].equals("")) {
 				/**
 				 * 识别到车牌之后的处理方法

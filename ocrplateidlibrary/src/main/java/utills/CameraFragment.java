@@ -245,7 +245,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
     public void getRecogResult(String[] result,byte[] Currentdata){
         preH = cameraManager.getPreviewSize().y;
         preW = cameraManager.getPreviewSize().x;
-        String path;
+        //String path;
         if(Currentdata==null){
             myCameraActivity.SendfeedbackData(recogBinder.getRecogData());
         }else{
@@ -283,7 +283,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
                 bitmap = BitmapFactory.decodeByteArray(
                         baos.toByteArray(), 0, baos.size(),
                         options);
-                path = Utils.savePicture(bitmap);
+                //path = Utils.savePicture(bitmap);
                 if(bitmap!=null&&!bitmap.isRecycled()){
                     bitmap.recycle();
                     bitmap=null;
@@ -313,7 +313,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
                 bitmap = Bitmap.createBitmap(bitmap, 0, 0,
                         bitmap.getWidth(), bitmap.getHeight(), matrix,
                         true);
-                path = Utils.savePicture(bitmap);
+                //path = Utils.savePicture(bitmap);
                 if (bitmap != null && !bitmap.isRecycled()) {
                     bitmap.recycle();
                     bitmap = null;
@@ -324,7 +324,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
         /**
          * 将结果返回到activity
          */
-        myCameraActivity.getResult(result,path);
+        myCameraActivity.getResult(result);
 
     }
 
